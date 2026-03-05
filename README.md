@@ -2,7 +2,58 @@
 
 Sources, workflows, and a path to start working with Claude Code. Return here for new material, features, and guides.
 
+## Install as a Claude Code Plugin
+
+This repo is also a **Claude Code plugin**. Install it to get interactive onboarding skills directly inside Claude Code.
+
+### Quick install (from GitHub)
+
+```
+claude --plugin-dir /path/to/onboarding-claude-code
+```
+
+Or clone and point to it:
+
+```bash
+git clone https://github.com/OriNachum/onboarding-claude-code.git
+claude --plugin-dir ./onboarding-claude-code
+```
+
+### Available skills
+
+Once installed, you can invoke these skills:
+
+| Skill | What it does |
+|---|---|
+| `/onboarding-claude-code:guide` | See all skills and where to start |
+| `/onboarding-claude-code:setup` | Walk through initial setup step by step |
+| `/onboarding-claude-code:first-session` | Guide your first real working session |
+| `/onboarding-claude-code:best-practices` | Self-testing, context management, prompting |
+| `/onboarding-claude-code:automate` | Hooks, Skills, Sub Agents — when to use each |
+| `/onboarding-claude-code:configure` | Ongoing CLAUDE.md and settings refinement |
+
+### For teams
+
+Add this plugin to your project's `.claude/settings.json` so every team member gets it automatically:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "onboarding-claude-code": {
+      "source": {
+        "source": "github",
+        "repo": "OriNachum/onboarding-claude-code"
+      }
+    }
+  }
+}
+```
+
 ---
+
+## Reading the Docs
+
+The skills above are distilled from the full documentation below. For deeper reading, browse the docs directly.
 
 ## Where to Start
 
