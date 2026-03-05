@@ -1,0 +1,135 @@
+name: Docs Freshness Check
+
+on:
+  schedule:
+    # Weekdays at 06:00 UTC
+    - cron: "0 6 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  check-freshness:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for existing docs-freshness PR
+        id: check-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          OPEN_PRS=$(gh pr list --label "docs-freshness" --state open --json number --jq 'length')
+          if [ "$OPEN_PRS" -gt 0 ] && [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Open docs-freshness PR already exists — skipping scheduled run."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run Claude Code for docs freshness
+        if: steps.check-pr.outputs.skip != 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          model: sonnet
+          max_turns: 25
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            You are a docs-freshness checker. Your job is to compare our reference docs
+            against Anthropic's official Claude Code documentation and fix ONLY factual
+            inaccuracies. Do NOT make stylistic changes or restructure content.
+
+            ## Step 1: Read all reference docs
+
+            Read every file in `skills/guide/references/`:
+            - automating-your-workflows.md
+            - best-practices.md
+            - built-ins.md
+            - choosing-your-model.md
+            - configuring-your-claude.md
+            - hooks.md
+            - plugins.md
+            - setting-your-environment.md
+            - skills.md
+            - starting-to-work.md
+            - sub-agents.md
+            - team-mode.md
+
+            ## Step 2: Fetch official docs
+
+            Use WebFetch to retrieve the following official Anthropic docs and compare
+            them against our reference files:
+
+            | Our file                          | Official URLs to fetch                                                                  |
+            |-----------------------------------|-----------------------------------------------------------------------------------------|
+            | setting-your-environment.md        | https://docs.anthropic.com/en/docs/claude-code/setup, https://docs.anthropic.com/en/docs/claude-code/settings, https://docs.anthropic.com/en/docs/claude-code/memory |
+            | starting-to-work.md                | https://docs.anthropic.com/en/docs/claude-code/permissions, https://docs.anthropic.com/en/docs/claude-code/interactive-mode |
+            | choosing-your-model.md             | https://docs.anthropic.com/en/docs/claude-code/model-config, https://docs.anthropic.com/en/docs/claude-code/fast-mode |
+            | best-practices.md                  | https://docs.anthropic.com/en/docs/claude-code/best-practices |
+            | built-ins.md                       | https://docs.anthropic.com/en/docs/claude-code/cli-reference, https://docs.anthropic.com/en/docs/claude-code/features-overview |
+            | automating-your-workflows.md       | https://docs.anthropic.com/en/docs/claude-code/hooks, https://docs.anthropic.com/en/docs/claude-code/skills, https://docs.anthropic.com/en/docs/claude-code/sub-agents |
+            | hooks.md                           | https://docs.anthropic.com/en/docs/claude-code/hooks, https://docs.anthropic.com/en/docs/claude-code/hooks-guide |
+            | skills.md                          | https://docs.anthropic.com/en/docs/claude-code/skills |
+            | sub-agents.md                      | https://docs.anthropic.com/en/docs/claude-code/sub-agents |
+            | plugins.md                         | https://docs.anthropic.com/en/docs/claude-code/plugins, https://docs.anthropic.com/en/docs/claude-code/plugins-reference, https://docs.anthropic.com/en/docs/claude-code/plugin-marketplaces |
+            | configuring-your-claude.md         | https://docs.anthropic.com/en/docs/claude-code/settings, https://docs.anthropic.com/en/docs/claude-code/memory |
+            | team-mode.md                       | https://docs.anthropic.com/en/docs/claude-code/agent-teams |
+
+            If a URL returns an error or 404, skip it and note it in the PR body.
+
+            ## Step 3: Compare and fix
+
+            Look for these types of inaccuracies:
+            - Outdated model names or IDs
+            - Changed CLI flags or commands
+            - Incorrect descriptions of features or behavior
+            - Missing important new features that are documented officially
+            - Deprecated content that no longer exists
+            - Wrong default values or configuration options
+
+            ## Step 4: Enforce CLAUDE.md rules
+
+            While editing, ensure these rules from CLAUDE.md are respected:
+            1. Slash commands are a subset of Skills — never list them separately
+            2. Three automation mechanisms only: Hooks, Skills, Sub Agents (Agent Teams are NOT a fourth)
+            3. Worktrees are an isolation layer, not a coordination mechanism
+            4. Agent Teams are experimental — always flagged with a warning
+            5. IKEA analogy: Hooks = assembly events, Skills = packages with instruction sheets, Sub Agents = packages + a handyperson
+
+            ## Step 5: Boundaries — do NOT do any of these
+
+            - Do NOT touch SKILL.md, CLAUDE.md, README.md, or plugin.json (except version bump)
+            - Do NOT add or remove reference files
+            - Do NOT rewrite sections that are accurate but worded differently from official docs
+            - Do NOT change navigation links at the top of reference files
+            - Do NOT make stylistic or formatting-only changes
+
+            ## Step 6: If changes were made
+
+            1. Bump the patch version in `.claude-plugin/plugin.json` (e.g. 1.1.0 → 1.1.1)
+            2. Create a new branch named `docs-freshness/YYYY-MM-DD` (using today's date)
+            3. Commit all changes
+            4. Open a PR with:
+               - Title: `docs: update reference docs for accuracy (YYYY-MM-DD)`
+               - Label: `docs-freshness`
+               - Body containing a table like:
+
+                 ## Changes
+
+                 | File | What changed | Source |
+                 |------|-------------|--------|
+                 | choosing-your-model.md | Updated model ID from X to Y | [model-config](url) |
+                 | ... | ... | ... |
+
+                 ## URLs that returned errors
+                 (list any URLs that 404'd or failed)
+
+            ## Step 7: If no changes needed
+
+            If all docs are accurate, do NOT create a PR. Just output:
+            "All reference docs are current — no changes needed."

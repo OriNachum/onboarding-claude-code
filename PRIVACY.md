@@ -1,11 +1,11 @@
 # Privacy Policy
 
-**Onboarding Claude Code Plugin**  
+**Claude Code Guide Plugin**
 **Last updated:** March 5, 2026
 
 ## Overview
 
-The Onboarding Claude Code plugin is an open-source, content-only plugin that provides interactive onboarding guidance for Claude Code. This privacy policy explains what data the plugin does and does not collect.
+The Claude Code Guide plugin is an open-source, content-only plugin that provides interactive guidance for Claude Code. This privacy policy explains what data the plugin does and does not collect.
 
 ## Data Collection
 
@@ -24,8 +24,8 @@ Specifically, the plugin:
 
 The plugin consists entirely of static Markdown files:
 
-- A single skill (`/onboarding:guide`) defined in `skills/guide/SKILL.md`
-- Reference documentation in `skills/guide/references/` (Markdown files)
+- Two skills: `/guide:onboarding` (getting-started walkthrough) and `/guide:ask` (Q&A against reference docs)
+- Reference documentation in `skills/guide/ask/references/` (Markdown files)
 - A plugin manifest (`.claude-plugin/plugin.json`)
 - A marketplace manifest (`.claude-plugin/marketplace.json`)
 
@@ -37,7 +37,7 @@ This plugin does not integrate with any third-party services. It has no MCP serv
 
 ## Open Source
 
-The full source code is publicly available at [https://github.com/OriNachum/onboarding-claude-code](https://github.com/OriNachum/onboarding-claude-code) under the CC BY 4.0 license. You can inspect every file the plugin includes.
+The full source code is publicly available at [https://github.com/OriNachum/claude-code-guide](https://github.com/OriNachum/claude-code-guide) under the CC BY 4.0 license. You can inspect every file the plugin includes.
 
 ## Changes to This Policy
 
@@ -45,4 +45,4 @@ If the plugin's functionality changes in a way that affects data handling, this 
 
 ## Contact
 
-For questions about this privacy policy, please open an issue on the [GitHub repository](https://github.com/OriNachum/onboarding-claude-code/issues) or contact the maintainer, Ori Nachum.
+For questions about this privacy policy, please open an issue on the [GitHub repository](https://github.com/OriNachum/claude-code-guide/issues) or contact the maintainer, Ori Nachum.

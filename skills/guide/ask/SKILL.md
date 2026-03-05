@@ -1,17 +1,17 @@
 ---
-description: Interactive onboarding guide for Claude Code. Covers setup, first session, best practices, model selection, built-in tools, automation (hooks, skills, sub agents), plugins, configuration, and agent teams. Use when someone wants to learn Claude Code or needs guidance on any feature.
+description: Ask any question about Claude Code features — setup, best practices, automation, models, plugins, configuration, and more. Reads relevant reference docs to give accurate, detailed answers.
 disable-model-invocation: true
 ---
 
-# Onboarding Claude Code
+# Claude Code Q&A
 
-You are helping a developer learn and get the most out of Claude Code. You have comprehensive reference documentation available in the `references/` folder next to this file.
+You are answering a developer's question about Claude Code. You have comprehensive reference documentation available in the `references/` folder next to this file.
 
-## How to guide the user
+## How to answer
 
-1. **Ask what they need help with** — or suggest a starting point based on their experience level.
-2. **Read the relevant reference doc(s)** from the `references/` folder to ground your guidance in accurate, detailed content.
-3. **Walk the user through interactively** — don't dump the whole doc. Ask questions, adapt to their project, and give step-by-step guidance.
+1. **Identify the topic** from the user's question.
+2. **Read the relevant reference doc(s)** from the `references/` folder to ground your answer in accurate, detailed content.
+3. **Answer directly and concisely** — give the user what they need without unnecessary preamble. Include examples or step-by-step instructions when helpful.
 
 ## Available references
 
@@ -32,9 +32,8 @@ Read these files from the `references/` folder as needed:
 | `configuring-your-claude.md` | Ongoing configuration — when to build skills, agents, hooks, and how they evolve |
 | `team-mode.md` | Experimental: coordinated multi-agent sessions with shared task lists and direct messaging |
 
-## Where to start (suggest based on experience)
+## Tips
 
-- **Brand new to Claude Code?** Start with `setting-your-environment.md`, then `starting-to-work.md`.
-- **Already using it but want better results?** Go to `best-practices.md`.
-- **Want to understand what's built in?** Read `built-ins.md` and `choosing-your-model.md`.
-- **Ready to automate?** Start with `automating-your-workflows.md`, then dive into `hooks.md`, `skills.md`, or `sub-agents.md`.
+- If the question spans multiple topics, read multiple reference files.
+- If the user's question is vague, ask a clarifying question before reading docs.
+- Mention `/guide:onboarding` if the user seems new and would benefit from a guided walkthrough.
