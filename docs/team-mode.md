@@ -2,35 +2,43 @@
 
 [← Back to Automating Your Workflows](automating-your-workflows.md)
 
-Sometimes one Claude isn't enough. You have multiple tasks that can run at the same time — separate features, independent investigations, or a review that shouldn't block implementation. Claude Code gives you three ways to parallelize work, each at a different level of coordination.
+When you need multiple Claudes working at the same time, there are two separate concepts to understand: **how agents are spawned** (sub agents vs agent teams) and **how they're isolated** (worktrees). These aren't alternatives to each other — they layer together.
 
 ---
 
-## The Three Approaches
+## Two Concepts, Not Three
 
-| Approach | What it is | Coordination | Best for |
-|---|---|---|---|
-| **Git Worktrees** | Multiple independent Claude sessions, each in its own worktree | None — you coordinate manually | Independent tasks that don't need to talk to each other |
-| **Sub Agents** | Specialist agents spawned within your session | Report results back to the main agent only | Focused tasks where only the result matters |
-| **Agent Teams** | Multiple Claude instances with shared task list and messaging | Teammates communicate directly with each other | Complex work requiring discussion and collaboration |
+### Worktrees — The Isolation Layer
 
-Think of it as a spectrum of coordination:
+Git worktrees give each agent its own copy of the codebase so their file changes don't collide. Worktrees are *not* an alternative to sub agents or agent teams — they're a layer that works *alongside* both.
 
-- **Worktrees**: You're the project manager. You open multiple terminals, give each Claude a task, and combine the results yourself.
-- **Sub Agents**: Claude is the project manager. It delegates focused tasks to helpers who report back, but the helpers never talk to each other.
-- **Agent Teams**: Claude leads a team. Teammates have a shared task list, can message each other, challenge each other's findings, and self-coordinate.
+- A **sub agent** can run in a worktree (`isolation: worktree` in the agent frontmatter)
+- **Agent team** teammates can each work in their own worktree to avoid file conflicts
+- **You** can open multiple terminals with `claude --worktree` and manage them yourself
+
+Worktrees solve the *isolation* problem. Sub agents and agent teams solve the *coordination* problem.
+
+### Two Ways to Spawn Parallel Agents
+
+| | [Sub Agents](sub-agents.md) | Agent Teams |
+|---|---|---|
+| **What they are** | Helper agents spawned within your session | Multiple full Claude Code instances coordinated by a lead |
+| **Communication** | One-way: report results back to the main agent | Multi-way: shared task list + direct messaging between teammates |
+| **Context** | Own context window, results summarized back | Own context window, fully independent sessions |
+| **Coordination** | Main agent manages all work | Teammates self-coordinate, claim tasks, message each other |
+| **Can talk to each other?** | No — helpers never see each other | Yes — teammates message each other directly |
+| **Token cost** | Lower: results summarized back | Higher: each teammate is a separate Claude instance |
+| **Best for** | Focused tasks where only the result matters | Complex work requiring discussion and collaboration |
+
+Think of it this way: **sub agents** are specialists you send off to do a job — they come back with an answer. **Agent teams** are colleagues working in the same room — they can talk to each other, challenge each other's ideas, and coordinate their work without going through you.
+
+Both can use worktrees for file isolation. Neither *requires* worktrees, but parallel work that modifies files should use them to prevent conflicts.
 
 ---
 
-## Git Worktrees — Manual Parallelism
+## Worktrees in Practice
 
-Git worktrees create separate working directories that each have their own files and branch, while sharing the same repository history. Each worktree gets its own Claude session, so changes in one don't collide with another.
-
-### When to use worktrees
-
-Use worktrees when your tasks are genuinely independent — a feature branch and a bug fix that touch different files, or two explorations where you don't need the results to feed into each other. You're the coordinator: you decide when each task is done and how to merge the results.
-
-### Quick start
+### Starting a worktree session manually
 
 ```bash
 # Start Claude in a named worktree (creates branch worktree-feature-auth)
@@ -43,17 +51,39 @@ claude --worktree bugfix-123
 claude --worktree
 ```
 
-Worktrees are created at `<repo>/.claude/worktrees/<name>` and branch from your default remote branch.
+Worktrees are created at `<repo>/.claude/worktrees/<name>` and branch from your default remote branch. You can also ask Claude during a session to "work in a worktree" and it will create one automatically.
 
-You can also ask Claude during a session to "work in a worktree" or "start a worktree" and it will create one automatically.
+### Worktrees with sub agents
 
-### Sub agent worktrees
+Add `isolation: worktree` to a sub agent's frontmatter so it works in its own copy of the codebase:
 
-Sub agents can also use worktree isolation. Ask Claude to "use worktrees for your agents" or add `isolation: worktree` to a custom agent's frontmatter. Each sub agent gets its own worktree that's automatically cleaned up when it finishes without changes.
+```markdown
+# .claude/agents/refactorer.md
+---
+name: refactorer
+description: Refactors code modules independently
+tools: Read, Edit, Bash, Grep, Glob
+model: sonnet
+isolation: worktree
+---
+
+Refactor the specified module...
+```
+
+Or ask Claude: "use worktrees for your agents." Each sub agent gets its own worktree that's automatically cleaned up when it finishes without changes.
+
+### Worktrees with agent teams
+
+When setting up a team, tell the lead to use worktrees to prevent file conflicts:
+
+```
+Create an agent team to implement these three modules in parallel.
+Each teammate should work in its own worktree to avoid conflicts.
+```
 
 ### Cleanup
 
-When you exit a worktree session, Claude handles cleanup based on whether you made changes. If there are no changes, the worktree and branch are removed automatically. If there are commits or uncommitted changes, Claude prompts you to keep or remove the worktree.
+When you exit a worktree session, Claude handles cleanup based on whether you made changes. No changes: the worktree and branch are removed automatically. Commits or uncommitted changes exist: Claude prompts you to keep or remove it.
 
 Add `.claude/worktrees/` to your `.gitignore` to prevent worktree contents from showing as untracked files.
 
@@ -65,9 +95,6 @@ For more control over location and branch, create worktrees with Git directly:
 # Create a worktree with a new branch
 git worktree add ../project-feature-a -b feature-a
 
-# Create a worktree checking out an existing branch
-git worktree add ../project-bugfix bugfix-123
-
 # Start Claude in the worktree
 cd ../project-feature-a && claude
 
@@ -75,48 +102,41 @@ cd ../project-feature-a && claude
 git worktree remove ../project-feature-a
 ```
 
-Remember to install dependencies (e.g., `npm install`) in each new worktree according to your project's setup.
+Remember to install dependencies (e.g., `npm install`) in each new worktree.
 
 ---
 
-## Sub Agents — Delegated Parallelism
+## Sub Agents for Parallel Work
 
-Sub agents run within your current session. Claude spawns them, they do their work in an isolated context window, and they report results back. The key distinction from worktrees: Claude manages the delegation, and from agent teams: the helpers never talk to each other.
+Sub agents are the simpler option for parallelism. Claude spawns them, they work in their own context, and they report results back. The main agent synthesizes everything. See [Sub Agents](sub-agents.md) for full details on creating and configuring them.
 
-See [Sub Agents](sub-agents.md) for full details on creating and configuring sub agents.
+### When sub agents are enough
 
-### When to use sub agents for parallel work
+Most parallel work fits the sub agent model. Use them when:
 
-Sub agents are ideal when you want Claude to parallelize automatically without you managing separate terminals. The results feed back into your main conversation as summaries, keeping your context clean.
+- You care about the *result*, not the *process* (code review findings, test results, research summaries)
+- Tasks are independent — each helper doesn't need to know what the others are doing
+- You want Claude to manage the delegation automatically
 
-Good fits include running tests and fixing failures in isolation, researching multiple parts of a codebase simultaneously, code review across different modules, and any task where you care about the *result* but not the *process*.
+### When to add worktree isolation
 
-### Sub agents vs worktrees
-
-Sub agents are lighter weight — no separate terminal, no manual coordination, automatic context cleanup. But they only report back to the main agent. If you need to intervene mid-task or combine findings yourself, worktrees give you more control.
+If your sub agents will modify files (not just read and analyze), add `isolation: worktree` to prevent them from overwriting each other's changes. Read-only sub agents (reviewers, researchers) don't need worktrees.
 
 ---
 
-## Agent Teams — Coordinated Parallelism
+## Agent Teams for Coordinated Work
 
-Agent teams are the most powerful option: multiple Claude Code instances that share a task list, communicate with each other, and self-coordinate. One session acts as the team lead, and teammates work independently but can message each other directly.
+Agent teams are the more powerful option: multiple full Claude Code sessions that share a task list and communicate directly. One session acts as the lead, and teammates are independent instances that can message each other.
 
 > **Note:** Agent teams are experimental and disabled by default. Enable them in your settings before use.
 
-### When to use agent teams
+### How agent teams differ from sub agents
 
-Agent teams shine when the parallel workers need to *interact*:
+The key difference is communication. Sub agents only report back to the main agent — they never see each other. Agent team teammates share a task list, claim work, and message each other directly. This makes agent teams better when workers need to *discuss*, *challenge*, and *coordinate* — not just deliver results independently.
 
-- **Research and review**: Multiple teammates investigate different aspects of a problem, then share and challenge each other's findings
-- **Competing hypotheses**: Teammates test different theories in parallel and debate to converge on the answer
-- **New modules or features**: Each teammate owns a separate piece, but they coordinate at the boundaries
-- **Cross-layer coordination**: Changes that span frontend, backend, and tests, each owned by a different teammate
-
-Agent teams add coordination overhead and use significantly more tokens than a single session. For sequential tasks, same-file edits, or work with heavy dependencies between tasks, a single session or sub agents is more effective.
+Agent teams also cost significantly more tokens, since each teammate is a separate Claude instance with its own full context window.
 
 ### Enable agent teams
-
-Agent teams are disabled by default. Enable them in your settings:
 
 ```json
 {
@@ -128,7 +148,7 @@ Agent teams are disabled by default. Enable them in your settings:
 
 ### Start a team
 
-Tell Claude to create an agent team and describe the task and team structure in natural language:
+Describe the task and team structure in natural language:
 
 ```
 I'm designing a CLI tool that helps developers track TODO comments.
@@ -136,7 +156,7 @@ Create an agent team to explore this from different angles:
 one teammate on UX, one on technical architecture, one playing devil's advocate.
 ```
 
-Claude creates the team, spawns teammates, and coordinates work. You can also specify the number of teammates and which model they should use:
+You can also specify count and model:
 
 ```
 Create a team with 4 teammates to refactor these modules in parallel.
@@ -145,13 +165,9 @@ Use Sonnet for each teammate.
 
 ### Display modes
 
-Agent teams support two display modes:
+**In-process** (default): All teammates run inside your main terminal. Use `Shift+Down` to cycle through teammates. Works in any terminal.
 
-**In-process** (default): All teammates run inside your main terminal. Use `Shift+Down` to cycle through teammates and type to message them directly. Works in any terminal.
-
-**Split panes**: Each teammate gets its own pane. You can see everyone's output at once and click into a pane to interact directly. Requires `tmux` or iTerm2.
-
-Configure in settings:
+**Split panes**: Each teammate gets its own pane via `tmux` or iTerm2. You can see everyone's output at once and click into a pane to interact directly.
 
 ```json
 {
@@ -159,82 +175,56 @@ Configure in settings:
 }
 ```
 
-Or per session:
-
-```bash
-claude --teammate-mode in-process
-```
+Or per session: `claude --teammate-mode in-process`
 
 ### Interacting with the team
 
-**Message teammates directly**: In in-process mode, use `Shift+Down` to cycle through teammates. In split-pane mode, click into a teammate's pane. Each teammate is a full Claude Code session.
-
-**View the task list**: Press `Ctrl+T` to toggle the shared task list.
-
-**Require plan approval**: For risky tasks, you can require teammates to plan before implementing. The lead reviews and approves or rejects with feedback:
-
-```
-Spawn an architect teammate to refactor the authentication module.
-Require plan approval before they make any changes.
-```
+- **Message teammates directly**: `Shift+Down` to cycle (in-process) or click pane (split mode)
+- **View the task list**: `Ctrl+T`
+- **Require plan approval**: "Spawn an architect teammate to refactor auth. Require plan approval before they make any changes."
 
 ### Task coordination
 
-The shared task list is how work is organized. Tasks have three states: pending, in progress, and completed. Tasks can depend on other tasks — a pending task with unresolved dependencies can't be claimed until those dependencies are completed.
-
-The lead creates tasks and teammates work through them. Teammates can self-claim the next available task after finishing one, or the lead can assign explicitly.
+Tasks have three states: pending, in progress, completed. Tasks can depend on other tasks. The lead creates tasks; teammates self-claim or get assigned. Task claiming uses file locking to prevent race conditions.
 
 ### Quality gates with hooks
 
-Use hooks to enforce rules when teammates finish work:
-
-- **TeammateIdle**: Fires when a teammate is about to go idle. Exit with code 2 to send feedback and keep the teammate working.
+- **TeammateIdle**: Fires when a teammate is about to go idle. Exit with code 2 to send feedback and keep them working.
 - **TaskCompleted**: Fires when a task is being marked complete. Exit with code 2 to prevent completion and send feedback.
 
 ### Shutting down
-
-Shut down individual teammates by telling the lead:
 
 ```
 Ask the researcher teammate to shut down
 ```
 
-When done, clean up the entire team:
+When done: `Clean up the team`. Always use the lead to clean up.
 
-```
-Clean up the team
-```
+### Best practices
 
-Always use the lead to clean up — teammates should not run cleanup themselves.
+**Give teammates enough context.** They load project context (CLAUDE.md, MCP, skills) but don't inherit the lead's conversation history. Include details in the spawn prompt.
 
-### Best practices for agent teams
+**Start with 3–5 teammates.** Aim for 5–6 tasks per teammate. Scale up only when work genuinely benefits from more parallelism.
 
-**Give teammates enough context.** Teammates load project context automatically (CLAUDE.md, MCP servers, skills) but don't inherit the lead's conversation history. Include task-specific details in the spawn prompt.
+**Avoid file conflicts.** Use worktrees, or break work so each teammate owns different files.
 
-**Start with 3–5 teammates.** This balances parallel work with manageable coordination. Aim for 5–6 tasks per teammate.
-
-**Size tasks appropriately.** Too small and coordination overhead exceeds the benefit. Too large and teammates work too long without check-ins. Aim for self-contained units that produce a clear deliverable — a function, a test file, a review.
-
-**Avoid file conflicts.** Two teammates editing the same file leads to overwrites. Break work so each teammate owns a different set of files.
-
-**Monitor and steer.** Check in on progress, redirect approaches that aren't working, and synthesize findings as they come in. Unattended teams risk wasted effort.
-
-**Start with research and review.** If you're new to agent teams, begin with tasks that don't require code changes — reviewing a PR, researching a library, investigating a bug. These show the value of parallel exploration with less coordination risk.
+**Start with research and review.** If you're new to agent teams, begin with read-only tasks (reviewing a PR, researching a library) before trying parallel implementation.
 
 ---
 
-## Choosing the Right Approach
+## Choosing Your Approach
 
-| Question | Worktrees | Sub Agents | Agent Teams |
-|---|---|---|---|
-| Do the tasks need to talk to each other? | No | No | Yes |
-| Who coordinates? | You | Claude (main session) | Claude (lead) + teammates self-coordinate |
-| Token cost | Lowest (separate sessions) | Low (results summarized back) | Highest (each teammate is a full instance) |
-| Setup required | `--worktree` flag | Agent files or natural language | Enable experimental flag + describe team |
-| Can you intervene mid-task? | Yes (switch terminals) | No (wait for results) | Yes (`Shift+Down` or click pane) |
-| Cleanup | Automatic or manual | Automatic | Tell the lead to clean up |
+| Scenario | Approach |
+|---|---|
+| Independent tasks, you want full control | `claude --worktree` in multiple terminals |
+| Focused tasks where only results matter | Sub agents (add `isolation: worktree` if they edit files) |
+| Tasks that need discussion and coordination | Agent teams (with worktrees for file isolation) |
+| Code review from multiple angles | Agent team with 3 reviewers (security, performance, tests) |
+| Run tests + fix failures in isolation | Sub agent with worktree isolation |
+| Competing hypotheses for a bug | Agent team where teammates debate and disprove each other |
+| Feature + bug fix in parallel | Two `--worktree` sessions (simplest) |
 
-**Start simple.** If your tasks are independent, use worktrees. If you want Claude to manage the delegation, use sub agents. Only reach for agent teams when teammates genuinely need to communicate — the coordination overhead and token cost are significant.
+The common thread: **worktrees for isolation, sub agents or agent teams for coordination.** Start with the simplest option that fits your task.
 
 ---
 
@@ -242,19 +232,19 @@ Always use the lead to clean up — teammates should not run cleanup themselves.
 
 ### Worktree issues
 
-If `--worktree` fails, check that you're inside a git repository and that the `.claude/worktrees/` directory is writable. For non-git version control, configure `WorktreeCreate` and `WorktreeRemove` hooks to provide custom worktree logic.
+If `--worktree` fails, check that you're inside a git repository and that the `.claude/worktrees/` directory is writable. For non-git version control, configure `WorktreeCreate` and `WorktreeRemove` hooks.
 
 ### Agent team issues
 
-**Teammates not appearing**: In in-process mode, press `Shift+Down` — they may be running but not visible. Check that your task was complex enough to warrant a team.
+**Teammates not appearing**: Press `Shift+Down` — they may be running but not visible. Check that your task warranted a team.
 
-**Too many permission prompts**: Pre-approve common operations in your permission settings before spawning teammates.
+**Too many permission prompts**: Pre-approve common operations in permission settings before spawning teammates.
 
-**Lead finishes before teammates**: Tell it to wait: "Wait for your teammates to complete their tasks before proceeding."
+**Lead finishes before teammates**: Tell it: "Wait for your teammates to complete their tasks before proceeding."
 
-**Orphaned tmux sessions**: List and kill manually: `tmux ls` then `tmux kill-session -t <name>`.
+**Orphaned tmux sessions**: `tmux ls` then `tmux kill-session -t <name>`.
 
-**Current limitations**: No session resumption with in-process teammates, one team per session, no nested teams (teammates can't spawn their own teams), lead is fixed for the session's lifetime, split panes require tmux or iTerm2.
+**Current limitations**: No session resumption with in-process teammates, one team per session, no nested teams, lead is fixed for the session, split panes require tmux or iTerm2.
 
 ---
 
