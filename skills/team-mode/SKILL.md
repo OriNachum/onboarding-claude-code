@@ -1,5 +1,6 @@
 ---
 description: Guide to Agent Teams — experimental multi-agent coordination where multiple separate Claude instances work in parallel. Use when someone wants to understand or try the team mode feature.
+disable-model-invocation: true
 ---
 
 # Agent Teams (Experimental)
@@ -63,6 +64,6 @@ Agent Teams are an **operational mode**, not a fourth automation mechanism. The 
 Agent Teams represent a way of *combining* these at scale — multiple full sessions, each potentially using hooks, skills, and sub agents internally.
 
 ## Related skills
-- `/onboarding-claude-code:sub-agents` — specialist agents within a single session
-- `/onboarding-claude-code:automate` — overview of the three core mechanisms
-- `/onboarding-claude-code:best-practices` — context management matters even more with teams
+- `/onboarding:sub-agents` — specialist agents within a single session
+- `/onboarding:automate` — overview of the three core mechanisms
+- `/onboarding:best-practices` — context management matters even more with teams
