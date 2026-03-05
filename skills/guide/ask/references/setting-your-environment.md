@@ -176,6 +176,8 @@ Or configure in `.mcp.json` at your project root for team sharing.
 
 Before reaching for MCP, check if a CLI tool exists. Claude works well with `gh` (GitHub), `aws`, `gcloud`, `kubectl`, and most CLI tools. Try: "Use `gh` to list open PRs."
 
+See [MCP](mcp.md) for the full guide on when MCP is the right choice vs simpler alternatives.
+
 ---
 
 ## Step 5: Set Up Auto Memory
