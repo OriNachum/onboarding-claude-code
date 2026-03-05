@@ -1,5 +1,6 @@
 ---
 description: Deep dive into Claude Code skills — reusable prompt-driven workflows you create as Markdown files. Slash commands are a subset of skills. Use when a developer wants to create their own reusable commands.
+disable-model-invocation: true
 ---
 
 # Skills — Reusable Prompt Workflows
@@ -80,7 +81,7 @@ Ask what they repeat often, then help them create a skill for it:
 Skills are **manually invoked** — the developer chooses when to use them. Hooks are **automatic** — they fire on events. Sub agents are **delegated** — Claude spawns them for specialized work. A skill can invoke sub agents internally.
 
 ## Related skills
-- `/onboarding-claude-code:hooks` — automatic event-driven automation
-- `/onboarding-claude-code:sub-agents` — delegating to specialist agents
-- `/onboarding-claude-code:automate` — overview of all three mechanisms
-- `/onboarding-claude-code:plugins-guide` — packaging skills into shareable plugins
+- `/onboarding:hooks` — automatic event-driven automation
+- `/onboarding:sub-agents` — delegating to specialist agents
+- `/onboarding:automate` — overview of all three mechanisms
+- `/onboarding:plugins-guide` — packaging skills into shareable plugins
