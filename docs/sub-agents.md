@@ -162,6 +162,60 @@ Sub agents can run in the foreground (blocking) or background (concurrent):
 
 Claude decides automatically, or you can ask: "run this in the background."
 
+## Worktree Isolation for Parallel Work
+
+When multiple sub agents need to modify files at the same time, their changes can collide. Git worktrees solve this by giving each sub agent its own copy of the codebase — separate files and branch, shared repository history.
+
+### Enable worktree isolation per agent
+
+Add `isolation: worktree` to a sub agent's frontmatter:
+
+```markdown
+# .claude/agents/refactorer.md
+---
+name: refactorer
+description: Refactors code modules independently
+tools: Read, Edit, Bash, Grep, Glob
+model: sonnet
+isolation: worktree
+---
+
+Refactor the specified module...
+```
+
+Or ask Claude during a session: "use worktrees for your agents."
+
+Each sub agent gets its own worktree that's automatically cleaned up when it finishes without changes. If it made commits, Claude prompts you to keep or remove the worktree.
+
+### When to use worktree isolation
+
+Use worktrees for sub agents that **edit files** — refactorers, fixers, implementers working in parallel. Read-only sub agents (reviewers, researchers, explorers) don't need worktrees since they don't modify anything.
+
+### Manual worktree sessions
+
+You can also run multiple Claude sessions yourself, each in its own worktree:
+
+```bash
+# Start Claude in a named worktree (creates branch worktree-feature-auth)
+claude --worktree feature-auth
+
+# In another terminal, start a second session
+claude --worktree bugfix-123
+```
+
+Worktrees are created at `<repo>/.claude/worktrees/<name>`. Add `.claude/worktrees/` to your `.gitignore`.
+
+For more control, create worktrees with Git directly:
+
+```bash
+git worktree add ../project-feature-a -b feature-a
+cd ../project-feature-a && claude
+```
+
+Remember to install dependencies (e.g., `npm install`) in each new worktree.
+
+---
+
 ## Sub Agents vs Skills
 
 | Need | Use |
@@ -177,4 +231,5 @@ Claude decides automatically, or you can ask: "run this in the background."
 
 - Run `/agents` in Claude Code to manage your sub agents
 - See the [official sub agents documentation](https://code.claude.com/docs/en/sub-agents) for advanced patterns like chaining agents, resuming agents, and agent teams
+- See [Agent Teams](team-mode.md) for coordinated multi-agent work with shared task lists and direct messaging
 - Return to [Automating Your Workflows](automating-your-workflows.md) to compare with Hooks and Skills
