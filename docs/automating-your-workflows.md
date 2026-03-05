@@ -82,6 +82,7 @@ See [Plugins](plugins.md) for details on installing, creating, and sharing plugi
 - [Setting Your Environment](setting-your-environment.md) — Initial setup: CLAUDE.md, permissions, model selection, MCP servers, and customization
 - [Starting to Work](starting-to-work.md) — When to use Plan Mode, Accept Edits, and Normal mode
 - [Choosing Your Model](choosing-your-model.md) — Opus 4.6, Sonnet 4.6, Haiku, and effort levels
+- [Best Practices](best-practices.md) — Self-testing loops, context management, and effective prompting
 
 ### Automation Deep Dives
 - [Hooks](hooks.md) — Lifecycle automation, guardrails, and validation
