@@ -1,5 +1,6 @@
 ---
 description: Guide to Claude Code plugins — installing from marketplaces, creating your own, packaging skills/agents/hooks for sharing. Use when a developer wants to discover plugins or package their own work for distribution.
+disable-model-invocation: true
 ---
 
 # Plugins — Install, Create, and Share
@@ -105,7 +106,7 @@ Add to your project's `.claude/settings.json`:
 Team members are automatically prompted to install when they open the project.
 
 ## Related skills
-- `/onboarding-claude-code:skills-guide` — creating the skills that go into plugins
-- `/onboarding-claude-code:hooks` — creating hooks for plugins
-- `/onboarding-claude-code:sub-agents` — creating agents for plugins
-- `/onboarding-claude-code:automate` — overview of automation mechanisms
+- `/onboarding:skills-guide` — creating the skills that go into plugins
+- `/onboarding:hooks` — creating hooks for plugins
+- `/onboarding:sub-agents` — creating agents for plugins
+- `/onboarding:automate` — overview of automation mechanisms
