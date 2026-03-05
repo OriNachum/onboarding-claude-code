@@ -1,5 +1,6 @@
 ---
 description: Guide to ongoing Claude Code configuration — CLAUDE.md refinement, settings layers, building your agent's personality over time. Use when a developer wants to improve how Claude works in their project.
+disable-model-invocation: true
 ---
 
 # Configuring Your Claude
@@ -52,6 +53,6 @@ Configuration is a feedback loop:
 Encourage them to treat CLAUDE.md like code — version it, review changes, iterate.
 
 ## Related skills
-- `/onboarding-claude-code:setup` — initial environment setup
-- `/onboarding-claude-code:automate` — hooks, skills, and sub agents for automation
-- `/onboarding-claude-code:best-practices` — effective working patterns
+- `/onboarding:setup` — initial environment setup
+- `/onboarding:automate` — hooks, skills, and sub agents for automation
+- `/onboarding:best-practices` — effective working patterns
