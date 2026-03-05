@@ -1,5 +1,6 @@
 ---
 description: Help pick the right Claude model and effort level for the task at hand — Opus for deep reasoning, Sonnet for daily work, Haiku for quick queries. Use when unsure which model to use or when optimizing cost vs quality.
+disable-model-invocation: true
 ---
 
 # Choosing Your Model
@@ -71,6 +72,6 @@ Ask what they're working on and guide them:
 | Boilerplate generation | Sonnet or Haiku |
 
 ## Related skills
-- `/onboarding-claude-code:setup` — includes model selection in initial setup
-- `/onboarding-claude-code:best-practices` — context management (model choice affects context usage)
-- `/onboarding-claude-code:configure` — where to set model defaults
+- `/onboarding:setup` — includes model selection in initial setup
+- `/onboarding:best-practices` — context management (model choice affects context usage)
+- `/onboarding:configure` — where to set model defaults
