@@ -1,5 +1,6 @@
 ---
 description: Tour of Claude Code's built-in commands, tools, and capabilities — what's available out of the box before any customization. Use when someone wants to know what Claude Code can do natively.
+disable-model-invocation: true
 ---
 
 # Built-in Commands and Tools
@@ -65,6 +66,6 @@ Claude comes with some built-in capabilities (like code review). Custom skills y
 | `Up arrow` | Recall previous message |
 
 ## Related skills
-- `/onboarding-claude-code:setup` — initial setup that determines what's available
-- `/onboarding-claude-code:automate` — extend built-ins with hooks, skills, and sub agents
-- `/onboarding-claude-code:plugins-guide` — add more capabilities via plugins
+- `/onboarding:setup` — initial setup that determines what's available
+- `/onboarding:automate` — extend built-ins with hooks, skills, and sub agents
+- `/onboarding:plugins-guide` — add more capabilities via plugins
