@@ -8,6 +8,8 @@ This file tells Claude Code (and other AI agents) how to work with this reposito
 
 An onboarding guide for Claude Code users. All documentation lives in `docs/` as Markdown files. The `README.md` serves as the entry point with a documentation map and suggested reading order.
 
+This repo serves two audiences: humans reading the docs on GitHub, and Claude Code users who install it as a plugin to get interactive onboarding skills.
+
 This is a **documentation-only** repo — no application code, no build system, no tests. The content is meant to be read on GitHub (rendered Markdown) or as a GitHub Pages site.
 
 ---
@@ -16,9 +18,16 @@ This is a **documentation-only** repo — no application code, no build system, 
 
 ```
 onboarding-claude-code/
-├── README.md ..................... Entry point — doc map, reading order, quick links
-├── CLAUDE.md ..................... This file — agent instructions
-└── docs/
+├── .claude-plugin/
+│   └── plugin.json ............... Plugin manifest (name, version, metadata)
+├── skills/
+│   ├── guide/SKILL.md ............ Skill directory — shows all skills
+│   ├── setup/SKILL.md ............ Initial setup walkthrough
+│   ├── first-session/SKILL.md .... First working session guide
+│   ├── best-practices/SKILL.md ... Self-testing, context, prompting
+│   ├── automate/SKILL.md ......... Hooks, Skills, Sub Agents overview
+│   └── configure/SKILL.md ........ Ongoing configuration guide
+├── docs/ .......................... Full documentation (human-readable)
     ├── setting-your-environment.md ... Initial setup and installation
     ├── choosing-your-model.md ....... Model selection and effort levels
     ├── starting-to-work.md ......... First session — Plan Mode, Accept Edits, Normal
@@ -75,6 +84,21 @@ The `automating-your-workflows.md` page serves as the hub for all automation doc
 - Preserve existing cross-links
 - Maintain the IKEA analogy framework where it's used (Hooks = assembly events, Skills = the packages with tools, Sub Agents = the packages plus the handyperson who builds them)
 - Keep the onboarding tone — if you're writing reference material, you're probably going too deep
+
+---
+
+## Plugin skills
+
+The `skills/` directory contains SKILL.md files that Claude Code invokes when a user types `/onboarding-claude-code:skill-name`. Each skill is a distilled, actionable version of the corresponding doc page.
+
+When adding a new skill:
+1. Create `skills/skill-name/SKILL.md` with frontmatter (`description` is required)
+2. Write instructions Claude should follow — conversational, step-by-step, interactive
+3. End with "Related skills" linking to other `/onboarding-claude-code:*` skills
+4. Update the guide skill (`skills/guide/SKILL.md`) to list the new skill
+5. Update the skills table in `README.md`
+
+Skills are NOT reference docs. They're instructions for Claude to follow interactively with the developer. Write them as "you are helping a developer do X" — Claude becomes the guide.
 
 ---
 
