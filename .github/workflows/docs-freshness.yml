@@ -40,6 +40,12 @@ jobs:
           claude_code_oauth_token: ${{ secrets.ANTHROPIC_API_KEY }}
           claude_args: "--model sonnet"
           show_full_output: true
+          settings: |
+            {
+              "permissions": {
+                "allow": ["WebFetch", "WebSearch"]
+              }
+            }
           prompt: |
             You are a docs-freshness checker. Your job is to compare our reference docs
             against Anthropic's official Claude Code documentation and fix ONLY factual
