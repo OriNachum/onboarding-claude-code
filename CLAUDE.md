@@ -36,9 +36,11 @@ claude-code-guide/
 │               ├── built-ins.md
 │               ├── choosing-your-model.md
 │               ├── configuring-your-claude.md
+│               ├── github-actions.md
 │               ├── hooks.md
 │               ├── hooks-http.md
 │               ├── mcp.md
+│               ├── ongoing-work.md
 │               ├── plugins.md
 │               ├── setting-your-environment.md
 │               ├── skills.md

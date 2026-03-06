@@ -102,3 +102,4 @@ The real power comes from combining mechanisms. Here are three examples of what 
 - See [Automating Your Workflows](automating-your-workflows.md) for the comparison of automation mechanisms and links to each deep dive
 - See [Setting Your Environment](setting-your-environment.md) for initial setup if you haven't done it yet
 - See [Plugins](plugins.md) for packaging and sharing your configuration
+- See [Ongoing Work](ongoing-work.md) for automated maintenance that keeps your configuration healthy

@@ -76,6 +76,23 @@ See [Plugins](plugins.md) for details on installing, creating, and sharing plugi
 
 ---
 
+## Running in CI: GitHub Actions
+
+The three automation mechanisms work the same way whether Claude Code runs on your
+laptop or in a CI pipeline. [GitHub Actions](github-actions.md) is the primary way
+to run Claude Code in CI — on schedules, pull request events, or issue comments.
+
+Common CI use cases:
+- **Automated PR review** — Claude reviews every pull request
+- **Scheduled maintenance** — periodic doc freshness checks, configuration audits
+- **Issue triage** — Claude classifies and responds to new issues
+
+Your skills, hooks, and permissions carry over — the same automation you build
+locally works in CI. See [GitHub Actions](github-actions.md) for setup and
+[Ongoing Work](ongoing-work.md) for automated maintenance strategies.
+
+---
+
 ## All Documentation
 
 ### Getting Started
@@ -95,3 +112,5 @@ See [Plugins](plugins.md) for details on installing, creating, and sharing plugi
 ### Configuration & Extensions
 - [Configuring Your Claude](configuring-your-claude.md) — Ongoing configuration: when to build skills, agents, hooks, and plugins, and how they evolve over time
 - [Plugins](plugins.md) — Installing, creating, and sharing plugin packages
+- [GitHub Actions](github-actions.md) — Running Claude Code in CI
+- [Ongoing Work](ongoing-work.md) — Automated maintenance patterns

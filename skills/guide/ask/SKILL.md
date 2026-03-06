@@ -33,6 +33,8 @@ Read these files from the `references/` folder as needed:
 | `mcp.md` | MCP (Model Context Protocol) — when to use MCP vs CLI tools/skills/sub agents, the restaurant analogy, server setup and scopes |
 | `configuring-your-claude.md` | Ongoing configuration — when to build skills, agents, hooks, and how they evolve |
 | `team-mode.md` | Experimental: coordinated multi-agent sessions with shared task lists and direct messaging |
+| `github-actions.md` | Running Claude Code in GitHub Actions: setup, permissions, workflow patterns |
+| `ongoing-work.md` | Automated ongoing maintenance: scheduled freshness checks, configuration audits, drift detection |
 
 ## Tips
 
