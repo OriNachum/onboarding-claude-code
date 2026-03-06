@@ -35,13 +35,11 @@ jobs:
 
       - name: Run Claude Code for docs freshness
         if: steps.check-pr.outputs.skip != 'true'
-        uses: anthropics/claude-code-action@beta
+        uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          mode: agent
-          model: sonnet
-          max_turns: 25
-          direct_prompt: |
+          claude_args: "--model sonnet"
+          prompt: |
             You are a docs-freshness checker. Your job is to compare our reference docs
             against Anthropic's official Claude Code documentation and fix ONLY factual
             inaccuracies. Do NOT make stylistic changes or restructure content.
