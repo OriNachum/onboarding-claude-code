@@ -81,6 +81,11 @@ claude-code-guide/
 └── README.md                    This file
 ```
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=OriNachum/claude-code-guide&type=Date)](https://www.star-history.com/#OriNachum/claude-code-guide&Date)
+
+
 ## Contributing
 
 Contributions welcome! The skills are at `skills/guide/onboarding/SKILL.md` and `skills/guide/ask/SKILL.md`. Reference docs are in `skills/guide/ask/references/`.
