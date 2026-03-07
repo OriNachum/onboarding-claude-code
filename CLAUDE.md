@@ -36,6 +36,7 @@ claude-code-guide/
 │               │   ├── new-project-existing-repo.md
 │               │   ├── auto-maintain-claude-md.md
 │               │   ├── context-management-and-clear.md
+│               │   ├── discovering-plugins.md
 │               │   └── sub-agents-in-monolith.md
 │               ├── automating-your-workflows.md
 │               ├── best-practices.md
@@ -45,8 +46,10 @@ claude-code-guide/
 │               ├── github-actions.md
 │               ├── hooks.md
 │               ├── hooks-http.md
+│               ├── marketplace.md
 │               ├── mcp.md
 │               ├── ongoing-work.md
+│               ├── plugin-examples.md
 │               ├── plugins.md
 │               ├── setting-your-environment.md
 │               ├── skills.md

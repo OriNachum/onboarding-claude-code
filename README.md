@@ -79,6 +79,8 @@ Once installed, two skills are available:
 
 - [Configuring Your Claude](skills/ask/references/configuring-your-claude.md) — Ongoing configuration — when to build skills, agents, hooks, and how they evolve
 - [Plugins](skills/ask/references/plugins.md) — Installing, creating, and sharing Claude Code plugins
+- [Marketplace](skills/ask/references/marketplace.md) — Discovering, browsing, evaluating, publishing, and managing plugin marketplaces
+- [Plugin Examples](skills/ask/references/plugin-examples.md) — Curated showcase of notable plugins with patterns and install instructions
 - [MCP](skills/ask/references/mcp.md) — MCP (Model Context Protocol) — when to use it, the restaurant analogy, server setup and scopes
 - [Built-ins](skills/ask/references/built-ins.md) — Built-in slash commands, bundled skills, hook events, sub agents, and tools
 - [Ongoing Work](skills/ask/references/ongoing-work.md) — Managing long-running tasks, resuming work, and session continuity
@@ -97,6 +99,7 @@ Narrative walkthroughs showing Claude Code in real-world scenarios:
 - [Auto-Maintain CLAUDE.md](skills/ask/references/stories/auto-maintain-claude-md.md) — GitHub Actions cron job to keep CLAUDE.md fresh weekly
 - [Context Management](skills/ask/references/stories/context-management-and-clear.md) — When to use /clear, /compact, and how to manage context
 - [Sub Agents in a Monolith](skills/ask/references/stories/sub-agents-in-monolith.md) — Using sub agents to navigate and work within a large monolith
+- [Discovering Plugins](skills/ask/references/stories/discovering-plugins.md) — Browsing marketplaces, evaluating, and installing your first plugins
 
 ## Repository structure
 
@@ -111,8 +114,8 @@ claude-code-guide/
 │   └── ask/
 │       ├── SKILL.md             Q&A against reference docs
 │       └── references/
-│           ├── stories/         Narrative user-story walkthroughs (6 files)
-│           ├── ...              Detailed reference docs (16 files)
+│           ├── stories/         Narrative user-story walkthroughs (7 files)
+│           ├── ...              Detailed reference docs (18 files)
 ├── CLAUDE.md                    Agent instructions
 ├── PRIVACY.md                   Privacy policy
 ├── LICENSE                      CC BY 4.0

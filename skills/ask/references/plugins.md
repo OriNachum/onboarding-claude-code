@@ -197,24 +197,26 @@ After migrating, you can remove the originals from `.claude/` to avoid duplicate
 
 ## Key Plugins to Know About
 
-### Code Intelligence (LSP) Plugins
+Notable plugins from the official and community marketplaces:
 
-If you work with a typed language, install an LSP plugin to give Claude precise "go to definition", "find references", and automatic error detection after edits. Pre-built plugins exist for TypeScript, Python, Rust, and more — browse them in `/plugin`.
+- **frontend-design** (Anthropic) — Auto-invoked skill that improves Claude's frontend/UI output
+- **code-review** (Anthropic) — Parallel sub agent architecture for thorough code reviews
+- **plugin-dev** (Anthropic) — Guided end-to-end plugin creation workflow
+- **context7** (Upstash, community-managed) — MCP-powered access to up-to-date library documentation
+- **claude-code-setup** (schuettc) — Meta-plugin that helps configure Claude Code for your project
 
-### Community Plugins
-
-Browse the official Anthropic marketplace via `/plugin` for community-contributed plugins covering formatting, deployment, testing, and more.
+For detailed descriptions, install instructions, and the patterns each plugin demonstrates, see [Plugin Examples](plugin-examples.md).
 
 ## Distributing Your Plugin
 
-Once your plugin is ready:
+Push your plugin to a Git repository and share it through a marketplace. You can submit to the [official Anthropic marketplace](https://claude.ai/settings/plugins/submit), create your own community marketplace on GitHub, or distribute via your team's internal marketplace using `extraKnownMarketplaces`.
 
-1. Push it to a Git repository
-2. Create or join a marketplace (or submit to the [official Anthropic marketplace](https://claude.ai/settings/plugins/submit))
-3. Others install it via `/plugin`
+For the full guide to marketplace creation, publishing, and discovery, see [Marketplace](marketplace.md).
 
 ## Next Steps
 
 - Run `/plugin` to browse and install plugins
-- See the [official plugin docs](https://code.claude.com/docs/en/plugins) for advanced patterns like LSP servers and marketplace creation
+- See [Plugin Examples](plugin-examples.md) for a curated showcase of notable plugins and patterns
+- See [Marketplace](marketplace.md) for discovering, browsing, evaluating, and publishing plugins
+- See the [official plugin docs](https://code.claude.com/docs/en/plugins) for advanced patterns like LSP servers
 - Return to [Automating Your Workflows](automating-your-workflows.md) for the bigger picture

@@ -30,6 +30,8 @@ Read these files from the `references/` folder as needed:
 | `skills.md` | Creating reusable prompt workflows as Markdown skill files |
 | `sub-agents.md` | Specialist agent delegation with scoped permissions, worktree isolation |
 | `plugins.md` | Installing, creating, and sharing Claude Code plugins |
+| `marketplace.md` | Marketplace ecosystem — discovering, browsing, evaluating, publishing, and managing plugin marketplaces |
+| `plugin-examples.md` | Notable plugins — curated showcase with patterns and install instructions |
 | `mcp.md` | MCP (Model Context Protocol) — when to use MCP vs CLI tools/skills/sub agents, the restaurant analogy, server setup and scopes |
 | `configuring-your-claude.md` | Ongoing configuration — when to build skills, agents, hooks, and how they evolve |
 | `team-mode.md` | Experimental: coordinated multi-agent sessions with shared task lists and direct messaging |
@@ -48,6 +50,7 @@ Narrative walkthroughs in the `references/stories/` folder — read these for wo
 | `stories/auto-maintain-claude-md.md` | GitHub Actions cron job to keep CLAUDE.md fresh weekly |
 | `stories/context-management-and-clear.md` | When to use /clear, /compact, and how to manage context |
 | `stories/sub-agents-in-monolith.md` | Using sub agents to navigate and work within a large monolith |
+| `stories/discovering-plugins.md` | Discovering and installing plugins — browsing marketplaces, evaluating, first plugins |
 
 ## Tips
 
