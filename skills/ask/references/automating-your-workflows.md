@@ -12,6 +12,7 @@ You have different ways to automate your workflows using Claude Code. Each appro
 
 | Aspect | [Hooks](hooks.md) | [Skills](skills.md) | [Sub Agents](sub-agents.md) |
 |---|---|---|---|
+| **Level** | 🌿 Intermediate | 🌿 Intermediate | 🌳 Expert |
 | **What it is** | Shell commands, HTTP endpoints, or LLM prompts that run automatically at lifecycle events | Markdown instruction files Claude loads as reusable prompts/playbooks | Independent AI agents with their own context, tools, and permissions |
 | **When to think about it** | You want to *react* to something Claude does (before/after tool use, session start/end, permission requests) | You want to *teach* Claude how to do something (coding conventions, deploy steps, review checklists) | You want Claude to *delegate* a self-contained task to a specialist (code review, debugging, data analysis) |
 | **Trigger** | Automatic — fires on lifecycle events (PreToolUse, PostToolUse, Stop, etc.) | Manual (`/skill-name`) or automatic (Claude matches your request to the skill's description) | Automatic (Claude delegates based on description) or manual ("use the debugger agent") |
