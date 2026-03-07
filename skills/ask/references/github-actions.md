@@ -1,5 +1,7 @@
 # GitHub Actions
 
+> **Level: 🌿 Intermediate**
+
 [← Back to Automating Your Workflows](automating-your-workflows.md)
 
 GitHub Actions is the primary way to run Claude Code in CI/CD pipelines. Using the [`anthropics/claude-code-action`](https://github.com/anthropics/claude-code-action) action, you can have Claude review PRs, triage issues, run scheduled maintenance, and more — all without a human in the loop.
@@ -175,7 +177,7 @@ Key inputs for `anthropics/claude-code-action`:
 
 ---
 
-## Security Considerations
+## 🌳 Security Considerations
 
 - **Store secrets securely.** Use GitHub repository secrets for API keys — never hardcode them in workflow files.
 - **Scope GitHub permissions tightly.** Only grant the permissions the workflow actually needs (e.g., `contents: read` if Claude doesn't need to push).

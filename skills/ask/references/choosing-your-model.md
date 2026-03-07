@@ -1,5 +1,7 @@
 # Choosing Your Model
 
+> **Level: 🌱 Beginner**
+
 [← Back to Automating Your Workflows](automating-your-workflows.md)
 
 Claude Code lets you switch between models at any time. Each model has different strengths in speed, cost, and reasoning depth. Additionally, Opus 4.6 and Sonnet 4.6 support **effort levels** that control how much thinking the model does before responding.

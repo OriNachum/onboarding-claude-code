@@ -1,5 +1,7 @@
 # Navigating a Monolith with Sub Agents
 
+> **Level: 🌳 Expert**
+
 [← Back to References](../sub-agents.md)
 
 ## The Scenario

@@ -1,5 +1,7 @@
 # Adding a New Module to an Existing Codebase
 
+> **Level: 🌿 Intermediate**
+
 [← Back to References](../best-practices.md)
 
 ## The Scenario

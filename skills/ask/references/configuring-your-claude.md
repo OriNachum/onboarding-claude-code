@@ -1,5 +1,7 @@
 # Configuring Your Claude
 
+> **Level: 🌿 Intermediate**
+
 [← Back to Automating Your Workflows](automating-your-workflows.md)
 
 Your environment is set up (see [Setting Your Environment](setting-your-environment.md) if you haven't done that yet). Now comes the part that never really ends: teaching Claude how to work the way *you* work.
@@ -54,7 +56,7 @@ Your automation works well. Now you focus on sharing and refining:
 
 ---
 
-## How the Pieces Work Together
+## 🌳 How the Pieces Work Together
 
 The real power comes from combining mechanisms. Here are three examples of what a mature setup looks like:
 

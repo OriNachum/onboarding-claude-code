@@ -1,5 +1,7 @@
 # MCP (Model Context Protocol)
 
+> **Level: 🌿 Intermediate**
+
 ← [Back to Automating Your Workflows](automating-your-workflows.md)
 
 MCP gives Claude access to external tools and data sources through a standardized protocol. An MCP server exposes a set of tools, and Claude can call them during a session.
@@ -135,7 +137,7 @@ Use `${VAR}` or `${VAR:-default}` for machine-specific paths and secrets:
 }
 ```
 
-## MCP in Plugins
+## 🌳 MCP in Plugins
 
 Plugins can bundle MCP servers alongside skills, agents, and hooks. When a plugin is enabled, its MCP servers start automatically. Define them in `.mcp.json` at the plugin root or inline in `plugin.json`.
 

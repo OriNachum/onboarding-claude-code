@@ -1,5 +1,7 @@
 # Discovering and Installing Plugins
 
+> **Level: 🌱 Beginner**
+
 [← Back to References](../plugins.md)
 
 ## The Scenario

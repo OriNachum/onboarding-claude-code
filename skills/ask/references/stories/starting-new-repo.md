@@ -1,5 +1,7 @@
 # Getting Started: Your First Days with Claude Code
 
+> **Level: 🌱 Beginner**
+
 [← Back to References](../setting-your-environment.md)
 
 ## The Scenario

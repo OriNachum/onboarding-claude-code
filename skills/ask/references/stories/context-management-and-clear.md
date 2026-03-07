@@ -1,5 +1,7 @@
 # Mastering Context: When to /clear, /compact, and Manage Your Window
 
+> **Level: 🌿 Intermediate**
+
 [← Back to References](../best-practices.md)
 
 ## The Scenario

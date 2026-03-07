@@ -1,5 +1,7 @@
 # Hooks
 
+> **Level: 🌿 Intermediate**
+
 [← Back to Automating Your Workflows](automating-your-workflows.md)
 
 Hooks are user-defined shell commands, HTTP endpoints, or LLM prompts that execute automatically at specific points in Claude Code's lifecycle. They are your primary tool for creating **guardrails, validation, logging, and automated reactions** to what Claude does.
@@ -133,7 +135,7 @@ exit 0
 | Plugin `hooks/hooks.json` | When the plugin is enabled |
 | Skill/agent frontmatter | While that component is active |
 
-## Available Events
+## 🌳 Available Events
 
 | Event | When it fires | Can block? |
 |---|---|---|

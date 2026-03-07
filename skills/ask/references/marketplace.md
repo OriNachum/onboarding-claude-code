@@ -1,5 +1,7 @@
 # Marketplace
 
+> **Level: 🌿 Intermediate**
+
 [← Back to Plugins](plugins.md)
 
 The marketplace is how plugins get discovered and distributed. Claude Code supports multiple marketplace tiers, from Anthropic's official catalog to community-run collections and team-internal registries.
@@ -96,7 +98,7 @@ claude plugin marketplace add owner/repo
 
 This is useful for developing plugins locally or for team marketplaces distributed via file shares.
 
-## Creating Your Own Marketplace
+## 🌳 Creating Your Own Marketplace
 
 A marketplace is a GitHub repository (or local directory) containing a `marketplace.json` file at the root. This file lists all plugins available in the marketplace.
 

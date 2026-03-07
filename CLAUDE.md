@@ -80,6 +80,8 @@ These rules MUST be followed when editing or creating skills:
 
 6. **IKEA analogy**: Hooks = assembly events (they fire during the process), Skills = packages with instruction sheets (reusable, pre-written), Sub Agents = packages + a handyperson (delegate and they deliver).
 
+7. **Difficulty tiers** — Every reference doc has a `> **Level: 🌱/🌿/🌳**` badge after the title. Sections that differ from the file's overall level get an emoji prefix on the `##` heading. Only tag sections that differ — don't repeat the file-level tag on every heading.
+
 ---
 
 ## How to Edit

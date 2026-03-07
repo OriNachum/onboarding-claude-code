@@ -1,5 +1,7 @@
 # Skills
 
+> **Level: 🌿 Intermediate**
+
 [← Back to Automating Your Workflows](automating-your-workflows.md)
 
 Skills are Markdown instruction files that extend what Claude can do. Create a `SKILL.md` file with instructions, and Claude adds it to its toolkit. Skills are your primary tool for creating **reusable prompts, coding standards, deployment playbooks, and custom workflows**.

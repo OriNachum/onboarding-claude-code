@@ -1,5 +1,7 @@
 # Setting Your Environment
 
+> **Level: 🌱 Beginner**
+
 [← Back to Automating Your Workflows](automating-your-workflows.md)
 
 Getting Claude Code set up well from the start saves hours of friction later. This guide walks through the initial configuration — the things you do once (or once per project) so that every session starts from a good foundation.
@@ -160,7 +162,7 @@ See [Choosing Your Model](choosing-your-model.md) for detailed guidance on Opus 
 
 ---
 
-## Step 4: Connect External Tools (MCP)
+## 🌿 Step 4: Connect External Tools (MCP)
 
 MCP (Model Context Protocol) servers give Claude access to external tools and data. Common integrations include GitHub (issues, PRs, repos), Slack (messages, channels), databases (query, explore schemas), Figma (designs, components), and Notion (docs, knowledge base).
 

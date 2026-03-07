@@ -1,5 +1,7 @@
 # Sub Agents
 
+> **Level: 🌳 Expert**
+
 [← Back to Automating Your Workflows](automating-your-workflows.md)
 
 Sub Agents are specialized AI assistants that handle specific types of tasks. Each runs in its own context window with a custom system prompt, specific tool access, and independent permissions. They are your primary tool for **delegating self-contained tasks to focused specialists**.

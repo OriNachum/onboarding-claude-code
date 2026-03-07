@@ -1,5 +1,7 @@
 # Plugins
 
+> **Level: 🌿 Intermediate**
+
 [← Back to Automating Your Workflows](automating-your-workflows.md)
 
 Plugins are shareable bundles of skills, agents, hooks, and MCP servers packaged into a single installable unit. Think of them as the "app store" layer on top of Claude Code's extension system.
@@ -207,7 +209,7 @@ Notable plugins from the official and community marketplaces:
 
 For detailed descriptions, install instructions, and the patterns each plugin demonstrates, see [Plugin Examples](plugin-examples.md).
 
-## Distributing Your Plugin
+## 🌳 Distributing Your Plugin
 
 Push your plugin to a Git repository and share it through a marketplace. You can submit to the [official Anthropic marketplace](https://claude.ai/settings/plugins/submit), create your own community marketplace on GitHub, or distribute via your team's internal marketplace using `extraKnownMarketplaces`.
 

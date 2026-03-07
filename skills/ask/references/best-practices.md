@@ -1,5 +1,7 @@
 # Best Practices
 
+> **Level: 🌿 Intermediate**
+
 [← Back to Automating Your Workflows](automating-your-workflows.md)
 
 Claude Code is an autonomous agent, not a chatbot. It reads files, runs commands, modifies code, and works through problems while you watch, redirect, or step away. Getting the most out of it means understanding one fundamental constraint: **Claude's context window fills up fast, and performance degrades as it fills.** Every file Claude reads, every command output, every message — it all consumes context. The practices below help you work within that constraint and get dramatically better results.

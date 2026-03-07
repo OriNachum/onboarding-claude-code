@@ -1,5 +1,7 @@
 # A Day in the Life: Daily Workflow with Claude Code
 
+> **Level: 🌱 Beginner**
+
 [← Back to References](../best-practices.md)
 
 ## The Scenario

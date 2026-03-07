@@ -1,5 +1,7 @@
 # Starting to Work
 
+> **Level: 🌱 Beginner**
+
 [← Back to Automating Your Workflows](automating-your-workflows.md)
 
 Before you start typing a prompt, you need to make one key decision: **what permission mode should Claude run in?** This determines how much autonomy Claude has — from read-only exploration to fully autonomous execution.
@@ -152,7 +154,7 @@ Claude implements, and you supervise (Normal) or let it write freely (Accept Edi
 > Commit with a descriptive message and create a PR.
 ```
 
-## Beyond the Three Modes: Advanced Options
+## 🌿 Beyond the Three Modes: Advanced Options
 
 ### `dontAsk` mode
 

@@ -1,5 +1,7 @@
 # Automated CLAUDE.md Maintenance with GitHub Actions
 
+> **Level: 🌿 Intermediate**
+
 [← Back to References](../ongoing-work.md)
 
 ## The Scenario

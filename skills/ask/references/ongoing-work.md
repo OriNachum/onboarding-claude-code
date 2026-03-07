@@ -1,5 +1,7 @@
 # Ongoing Work
 
+> **Level: 🌳 Expert**
+
 [← Back to Automating Your Workflows](automating-your-workflows.md)
 
 Some maintenance shouldn't wait for a human to remember it. This guide covers automated ongoing processes — things that run on a schedule or trigger without you, keeping your project healthy over time.

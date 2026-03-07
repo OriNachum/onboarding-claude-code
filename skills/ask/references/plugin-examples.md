@@ -1,5 +1,7 @@
 # Plugin Examples
 
+> **Level: 🌿 Intermediate**
+
 [← Back to Plugins](plugins.md)
 
 A curated showcase of notable Claude Code plugins — what they do, what patterns they demonstrate, and how to install them. Use these as inspiration for your own plugins or as starting points for extending Claude Code.

@@ -1,5 +1,7 @@
 # Built-ins
 
+> **Level: 🌱 Beginner**
+
 [← Back to Automating Your Workflows](automating-your-workflows.md)
 
 Claude Code ships with built-in slash commands, bundled skills, hook events, and built-in sub agents out of the box. This page is a reference for everything available without any custom configuration.
@@ -47,7 +49,7 @@ Type `/` in Claude Code to see all available commands. Some commands depend on y
 | `/plugin` | Manage Claude Code plugins |
 | `/skills` | List available skills |
 
-### Git & Code Review
+### 🌿 Git & Code Review
 
 | Command | Purpose |
 |---|---|
@@ -87,7 +89,7 @@ Type `/` in Claude Code to see all available commands. Some commands depend on y
 | `/copy` | Copy the last assistant response to clipboard |
 | `/exit` | Exit the CLI (alias: `/quit`) |
 
-## Bundled Skills
+## 🌿 Bundled Skills
 
 Bundled skills ship with Claude Code and are available in every session. Unlike slash commands which execute fixed logic, bundled skills are prompt-based playbooks that use Claude's tools.
 
@@ -99,7 +101,7 @@ Bundled skills ship with Claude Code and are available in every session. Unlike 
 
 There is also a bundled **developer platform skill** that activates automatically when your code imports the Anthropic SDK — no manual invocation needed.
 
-## Built-in Hook Events
+## 🌿 Built-in Hook Events
 
 Claude Code provides these lifecycle events that you can hook into. No hooks are configured by default — you add them yourself — but these are the events available:
 
@@ -127,7 +129,7 @@ Hook handlers can be shell commands (`type: "command"`), HTTP endpoints (`type: 
 
 See [Hooks](hooks.md) for how to get started, or the [official hooks reference](https://code.claude.com/docs/en/hooks) for full schemas.
 
-## Built-in Sub Agents
+## 🌳 Built-in Sub Agents
 
 Claude Code includes built-in sub agents that Claude automatically uses when appropriate:
 

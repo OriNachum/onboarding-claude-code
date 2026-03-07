@@ -1,5 +1,7 @@
 # HTTP Hooks
 
+> **Level: 🌳 Expert**
+
 [← Back to Hooks](hooks.md)
 
 HTTP hooks send lifecycle event data as HTTP POST requests to a URL endpoint, instead of running a shell command. They use the same JSON input/output format as command hooks, making them interchangeable for most use cases.

@@ -1,5 +1,7 @@
 # Agent Teams
 
+> **Level: 🌳 Expert**
+
 [← Back to Automating Your Workflows](automating-your-workflows.md)
 
 Agent teams let you coordinate multiple Claude Code instances working together on a complex task. One session acts as the lead, and teammates work independently in their own context windows — but unlike [sub agents](sub-agents.md), teammates can communicate directly with each other, share a task list, and self-coordinate.

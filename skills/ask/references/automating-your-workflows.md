@@ -1,5 +1,7 @@
 # Automating Your Workflows
 
+> **Level: 🌿 Intermediate**
+
 You have different ways to automate your workflows using Claude Code. Each approach fits different needs — from reacting to tool events, to creating reusable prompts, to delegating entire tasks to specialized agents.
 
 **Note:** Slash commands (like `/compact`, `/help`, and custom `/my-command`) are a subset of Skills. Built-in slash commands are covered in the [Built-ins](built-ins.md) page. Custom slash commands are simply Skills with a name you invoke via `/`.
@@ -44,7 +46,7 @@ Ask yourself these questions:
 
 ---
 
-## Combining Them
+## 🌳 Combining Them
 
 These mechanisms work together. A typical mature setup might include:
 
