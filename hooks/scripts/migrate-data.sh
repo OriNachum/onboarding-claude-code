@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Lightweight schema migration — adds missing fields, updates pluginVersion
+# Lightweight schema migration — adds missing fields so tracking works
+# immediately after upgrade. Does NOT set pluginVersion or record migration
+# history — that is the game-mode skill's responsibility (user-initiated).
 set -euo pipefail
 
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-.}"
@@ -8,20 +10,14 @@ DATA_FILE="${PLUGIN_ROOT}/.local/game-data.json"
 # Exit if data file doesn't exist
 [ -f "$DATA_FILE" ] || exit 0
 
-# Read current plugin version from manifest
-PLUGIN_VERSION="$(jq -r '.version' "${PLUGIN_ROOT}/.claude-plugin/plugin.json")"
-
-# Check if migration is needed
-CURRENT_VERSION="$(jq -r '.pluginVersion // "unknown"' "$DATA_FILE")"
-[ "$CURRENT_VERSION" = "$PLUGIN_VERSION" ] && exit 0
-
 # Define expected feature categories
 EXPECTED='["shell","editing","reading","search","agents","skills","plugins","web","planning","mcp","notebooks"]'
 
 # Add missing fields and categories, preserve all existing data
+# Intentionally does not touch pluginVersion or migrations — those are
+# managed by the game-mode skill so the user sees the migration notice.
 TMPFILE="$(mktemp "${DATA_FILE}.XXXXXX")"
-jq --arg ver "$PLUGIN_VERSION" --argjson feats "$EXPECTED" '
-  .pluginVersion = $ver |
+jq --argjson feats "$EXPECTED" '
   reduce ($feats[]) as $f (.;
     if .features[$f] == null then
       .features[$f] = {"count": 0, "lastUsed": null}
