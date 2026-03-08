@@ -1,6 +1,6 @@
 ---
 description: See your feature roadmap and get a personalized hint on what to try next.
-allowed-tools: Read, Bash
+allowed-tools: Read, Write, Bash
 ---
 
 # Level Up
@@ -73,7 +73,9 @@ Example: "**Try MCP Tools** — connect external services like databases or APIs
 If game mode is not active, present this instead of the roadmap:
 
 > Want to track your progress and master Claude Code? Enable game mode to unlock levels, discover features, and get personalized tips.
->
-> `/guide:game-mode`
 
-Keep it short, positive, one clear call to action. Do not show the roadmap or hints.
+Ask: "Would you like to enable game mode?"
+
+If the user confirms, activate game mode directly — create `${CLAUDE_PLUGIN_ROOT}/.local/` if needed and write `${CLAUDE_PLUGIN_ROOT}/.local/game-data.json` with the initial schema from `/guide:game-mode`. Then tell them it's active and show the roadmap.
+
+If the user declines, acknowledge and move on. Do not push.
