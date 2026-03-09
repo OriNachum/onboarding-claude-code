@@ -78,6 +78,7 @@ Type `/` in Claude Code to see all available commands. Some commands depend on y
 | `/output-style [style]` | Switch output styles (standard, explanatory, learning) |
 | `/plan` | Enter plan mode directly from the prompt |
 | `/tasks` | List and manage background tasks |
+| `/loop [interval] [command]` | Run a prompt or command on a recurring interval (default: 10 minutes) |
 | `/keybindings` | Open keybindings configuration file |
 | `/stats` | Visualize daily usage, session history, streaks |
 | `/insights` | Generate a report analyzing your sessions |
