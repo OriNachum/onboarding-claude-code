@@ -2,6 +2,5 @@
 .claude/settings.json
 .local/
 .worktrees/
-Gemfile.lock
 _site/
 .jekyll-cache/

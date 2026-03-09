@@ -9,8 +9,8 @@ url: "https://claude-code-guide.org"
 theme: just-the-docs
 color_scheme: anthropic
 
+search_enabled: true
 search:
-  enabled: true
   button: true
 
 aux_links:
