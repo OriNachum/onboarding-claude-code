@@ -10,11 +10,10 @@ A community guide to **Claude Code** — setup, best practices, automation, and 
 
 **New!** Enable proactive learning with **Game Mode** — `/guide:game-mode on`
 
-{: .note }
-> This guide is also available as a **Claude Code plugin**. Install it for interactive onboarding and in-context Q&A.
+> **Plugin available** — This guide is also available as a **Claude Code plugin**. Install it for interactive onboarding and in-context Q&A.
 > See the [GitHub repo](https://github.com/OriNachum/claude-code-guide) for install instructions.
 
-![Claude Code Guide overview](https://github.com/user-attachments/assets/5330f813-6539-4e15-bb94-0e1994edd94c){: width="384" }
+<img width="384" alt="Claude Code Guide overview" src="https://github.com/user-attachments/assets/5330f813-6539-4e15-bb94-0e1994edd94c" />
 
 ## What's Inside
 
@@ -33,7 +32,7 @@ The guide is packaged as a Claude Code plugin with two main skills:
 - **`/guide:onboard`** — Interactive getting-started walkthrough
 - **`/guide:ask`** — Ask any question about Claude Code features
 
-![Plugin in action](https://github.com/user-attachments/assets/3643154f-00e9-4793-886e-e49adfee54ef){: width="600" }
+<img width="600" alt="Plugin in action" src="https://github.com/user-attachments/assets/3643154f-00e9-4793-886e-e49adfee54ef" />
 
 ## Listen to This Guide
 
