@@ -43,7 +43,7 @@ exclude:
   - PRIVACY.md
   - LICENSE
   - .local/
-  - docs/
+  - docs/plans/
   - skills/onboard/
   - skills/game-mode/
   - skills/level-up/

@@ -82,12 +82,13 @@ claude-code-guide/
 │       └── SKILL.md ...................... Feature roadmap and coaching hints
 ├── _config.yml ............................ Jekyll configuration (just-the-docs theme)
 ├── Gemfile ................................ Ruby dependencies
+├── docs/
+│   ├── getting-started.md ................. Nav parent: Getting Started
+│   ├── automation.md ...................... Nav parent: Automation
+│   ├── configuration.md ................... Nav parent: Configuration & Extensions
+│   ├── ci-cd.md ........................... Nav parent: CI/CD
+│   └── user-stories.md .................... Nav parent: User Stories
 ├── index.md ............................... Website landing page
-├── getting-started.md ..................... Nav parent: Getting Started
-├── automation.md .......................... Nav parent: Automation
-├── configuration.md ....................... Nav parent: Configuration & Extensions
-├── ci-cd.md ............................... Nav parent: CI/CD
-├── user-stories.md ........................ Nav parent: User Stories
 ├── .local/ ................................ Runtime data (gitignored)
 │   └── game-data.json .................... Usage data (created at runtime)
 ├── CLAUDE.md .............................. This file — agent instructions
