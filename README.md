@@ -1,7 +1,7 @@
-# Claude Code Guide 🌱
+# Claude Code Guide 🌿
 
 A Claude Code Guide — interactive onboarding and Q&A on setup, best practices, automation, and effective workflows, packaged as a plugin.  
-Designed with love for beginners 🌿 to experts. 🌳
+Designed with love for beginners 🌱 to experts. 🌳
 
 **New!** Enable a proactive learning with **Game Mode**!  
 Enable with `/guide:game-mode on`
