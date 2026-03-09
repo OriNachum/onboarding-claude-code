@@ -54,7 +54,7 @@ Narrative walkthroughs in the `references/stories/` folder — read these for wo
 | `stories/sub-agents-in-monolith.md` | 🌳 | Using sub agents to navigate and work within a large monolith |
 | `stories/discovering-plugins.md` | 🌱 | Discovering and installing plugins — browsing marketplaces, evaluating, first plugins |
 | `stories/memory-in-practice.md` | 🌱 | How auto memory works in practice — corrections that stick, explicit remembering, promoting to CLAUDE.md |
-| `stories/automated-briefings.md` | 🌿 | Monitoring a deploy with /loop — deploy health checks, one-time reminders, context management, graduating to CI |
+| `stories/automated-briefings.md` | 🌿 | Monitoring with /loop — deploy health checks, post-deploy validation, on-call ticket triage |
 
 ## Tips
 

@@ -64,7 +64,7 @@ These mechanisms work together. A typical mature setup might include:
 - **Hooks** that auto-lint after every file edit and block dangerous commands
 - **Sub Agents** that run parallel code reviews and test suites in isolation
 
-You can also layer [/loop](loop.md) on top of any combination — run a skill every 30 minutes, monitor something with a hook-guarded loop, or have each loop iteration spawn sub agents for parallel checks.
+You can also layer [/loop](loop.md) on top of any combination — spawn a sonnet 4.6 sub-agent + agent skill every 30 minutes to check something with a hook-guarded loop. 
 
 Back to the IKEA analogy: your skills are the instruction manuals your team has written for every type of furniture. Your sub agents are the handypersons who can work from those manuals independently. And your hooks are the checkpoints built into the workshop itself — every time anyone picks up a tool, opens a package, or finishes a build, the same checks fire automatically.
 
@@ -106,8 +106,8 @@ locally works in CI. See [GitHub Actions](github-actions.md) for setup and
 [Ongoing Work](ongoing-work.md) for automated maintenance strategies.
 
 **Tip:** If you're not sure whether a recurring task warrants a full CI pipeline,
-start with [/loop](loop.md) to prototype it locally within a single session. Once you've proven the pattern
-and cadence, graduate it to a GitHub Actions cron job for production reliability.
+use [/loop](loop.md) for in-session monitoring — deploy checks, post-deploy validation,
+on-call triage. For unattended, recurring automation, see [GitHub Actions](github-actions.md).
 
 ---
 

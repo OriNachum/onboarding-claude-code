@@ -86,7 +86,7 @@ Learn by example — these narrative walkthroughs show Claude Code in realistic,
 - [Sub Agents in a Monolith](skills/ask/references/stories/sub-agents-in-monolith.md) — Using sub agents to navigate and work within a large monolith
 - [Discovering Plugins](skills/ask/references/stories/discovering-plugins.md) — Browsing marketplaces, evaluating, and installing your first plugins
 - [Memory in Practice](skills/ask/references/stories/memory-in-practice.md) — How auto memory works — corrections that stick, promoting to CLAUDE.md
-- [Automated Briefings](skills/ask/references/stories/automated-briefings.md) — Monitoring a deploy with /loop, graduating to CI
+- [Automated Briefings](skills/ask/references/stories/automated-briefings.md) — Production monitoring with /loop — deploys, post-deploy validation, on-call triage
 
 ### Getting Started
 
@@ -121,7 +121,7 @@ Learn by example — these narrative walkthroughs show Claude Code in realistic,
 
 ### Other
 
-- [Loop](skills/ask/references/loop.md) — Running recurring tasks with /loop — polling, deploy monitoring, session-scoped scheduling
+- [Loop](skills/ask/references/loop.md) — Running recurring tasks with /loop — polling, deploy monitoring, on-call triage
 
 ## Repository structure
 

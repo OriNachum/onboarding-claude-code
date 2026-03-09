@@ -5,7 +5,7 @@ nav_order: 9
 permalink: /stories/automated-briefings/
 ---
 
-# Monitoring a Deploy with /loop
+# Production Monitoring with /loop
 
 > **Level: 🌿 Intermediate**
 
@@ -13,143 +13,152 @@ permalink: /stories/automated-briefings/
 
 ## The Scenario
 
-You're a developer about to kick off a major deploy that includes a database migration. The rollout will take a couple of hours, and you want to stay on top of it without manually checking status every few minutes. You'll use `/loop` to monitor the deploy during your afternoon session, hit a "warning moment" when context fills up, and eventually graduate the pattern to GitHub Actions for future deploys.
+You're a developer with a busy day ahead: on-call in the morning, a major deploy in the afternoon. You'll use `/loop` across three monitoring patterns — on-call ticket triage, deploy health, and post-deploy validation — and discover the sub-agent upgrade path for context management along the way.
+
+The emphasis: you're orchestrating agents and workflows, not writing application code. You set up skills, configure sub-agents, manage loops, and let Claude do the legwork while you make the decisions.
+
+You have a **Slack notification webhook** configured — all loops post to Slack so you can monitor from your phone or stay focused on other work.
 
 ---
 
 ## The Walkthrough
 
-### Step 1: Create a Deploy-Check Skill
+### Step 1: Morning — On-Call Ticket Triage (Simple Loop)
 
-First, you create a skill that checks deployment health. You write a Markdown file:
+You're on-call this morning. Instead of compulsively checking Jira, you create a simple skill:
+
+```markdown
+<!-- skills/ticket-triage/SKILL.md -->
+---
+description: Check for new on-call tickets and propose solutions
+---
+
+# Ticket Triage
+
+1. Check Jira for new tickets assigned to me or the on-call queue
+2. For each new ticket: read the description, check linked logs/errors
+3. Propose a diagnosis and next steps
+4. Post the summary to Slack
+```
+
+Start the loop:
+
+```text
+/loop 15m /ticket-triage
+```
+
+The first run executes immediately. From then on, every 15 minutes Claude checks for new tickets, reads the context, proposes solutions, and posts summaries to Slack. You review ticket summaries on your phone between other work. On-call goes from reactive interrupts to prepared, batch-processed triage.
+
+> **What's Happening:** `/loop` at its most useful — not just polling for status, but actively preparing work. Claude reads each ticket, pulls context, and proposes a solution. You review and decide. The loop does the legwork; you make the calls.
+
+### Step 2: The Context Problem
+
+After a couple of hours, you notice the conversation is getting heavy. Each ticket-triage iteration dumps full Jira descriptions, log excerpts, and proposed solutions into the main context. You check `/tasks` — the loop is still running, but the context cost is adding up. Claude's responses are getting slower and a compaction warning appears.
+
+The issue: the loop's output is too verbose for the main conversation.
+
+> **What's Happening:** This is the key pain point with simple loops. Every iteration adds to the conversation context. When the loop does heavy work (reading tickets, fetching logs, analyzing errors), that output accumulates fast.
+
+### Step 3: Upgrading to a Sub-Agent
+
+You upgrade the ticket-triage skill to a **sub-agent** configured to use **Sonnet 4.6** for cost-efficient legwork:
+
+```markdown
+<!-- skills/ticket-triage/SKILL.md -->
+---
+description: Check for new on-call tickets and propose solutions
+model: sonnet
+allowed-tools: ["Bash", "WebFetch"]
+---
+
+# Ticket Triage
+
+1. Check Jira for new tickets assigned to me or the on-call queue
+2. For each new ticket: read the description, check linked logs/errors
+3. Propose a diagnosis and next steps
+4. Post the full analysis to Slack
+5. Return ONLY a one-line summary to the main conversation (e.g., "3 new tickets, 1 critical — see Slack")
+```
+
+You restart the loop. Now each iteration spawns a Sonnet 4.6 sub-agent in its own context. The sub-agent does all the Jira fetching, log reading, and analysis — posts detailed results to Slack — and returns only a one-line summary to the main conversation (Opus 4.6). **The main context barely grows.**
+
+> **What's Happening:** This is the **Loop + Sub Agent** pattern. Opus 4.6 acts as the manager — it fires on schedule and delegates to Sonnet 4.6, which does the heavy lifting in isolation. The sub-agent's full context (Jira data, log excerpts, analysis) stays in its own window and gets discarded when it returns. The main conversation only accumulates one-line summaries. Cheaper model for repetitive legwork, clean context for the orchestrator.
+
+### Step 4: Afternoon — Deploy Monitoring
+
+A major deploy is scheduled. You already know the sub-agent pattern, so you create a deploy-check agent skill from the start:
 
 ```markdown
 <!-- skills/deploy-check/SKILL.md -->
 ---
 description: Check deployment rollout status and report health
+model: sonnet
+allowed-tools: ["Bash", "WebFetch"]
 ---
 
 # Deploy Check
 
-Check the current deployment status:
-
-1. Run `kubectl rollout status deployment/api --timeout=10s` to check rollout progress
-2. Run `kubectl get pods -l app=api --no-headers` to check pod status
-3. Check for any CrashLoopBackOff or Error states in the pods
-4. If the migration is running, check `kubectl logs job/db-migration --tail=5` for progress
-
-Report a concise status:
-- Rollout progress (e.g., "3/5 pods ready")
-- Any pods in error states
-- Migration status if applicable
-- Overall health: ✅ Healthy, ⚠️ Degraded, or ❌ Failing
+1. Run `kubectl rollout status deployment/api --timeout=10s`
+2. Run `kubectl get pods -l app=api --no-headers` — check for CrashLoopBackOff/Error
+3. If migration is running, check `kubectl logs job/db-migration --tail=5`
+4. Post detailed status to Slack (rollout progress, pod states, migration status)
+5. Return one-line summary: "4/5 pods ready, migration 60% complete" or "2 pods in CrashLoopBackOff"
 ```
 
-> **What's Happening:** [Skills](../skills.md) are Markdown instruction files. The `description` field lets Claude auto-match this skill to relevant requests. The skill uses `kubectl` commands to check deployment health — adjust these to match your infrastructure.
-
-### Step 2: Start the Deploy Loop
-
-With the skill in place, you kick off the deploy and start monitoring:
+Start the loop:
 
 ```text
 /loop 5m /deploy-check
 ```
 
-The first run executes immediately — you get a baseline health check right away. Then it repeats every 5 minutes, giving you a running status log without having to check manually.
+You switch to **Explore mode** to design your next feature. Deploy status arrives on Slack; you glance at your phone. The main conversation stays clean — just one-line summaries from the sub-agent.
 
-> **What's Happening:** `/loop` runs the command immediately, then waits for the interval before repeating. Each iteration runs in the same conversation, so Claude can detect trends: "Pod restart count increased from 2 to 5 since the last check." See [Loop](../loop.md) for full syntax and the [Limitations](../loop.md#limitations) section for hard constraints.
+> **What's Happening:** You're not watching the terminal. You're designing a feature in Explore mode while the sub-agent monitors the deploy. This is the key shift — you orchestrate agents and workflows, not write code. `/loop` + sub-agents + Slack = hands-free production monitoring.
 
-### Step 3: Add an Error-Rate Watcher
+### Step 5: Set a One-Time Reminder
 
-The deploy is rolling out, but you also want to watch your error dashboard. You add a second loop:
-
-```text
-/loop 10m check the error rate at our monitoring endpoint and flag any spike above 1% — compare to the baseline from the first check
-```
-
-Now you have two loops running: deploy health every 5 minutes, error rate every 10 minutes. Both accumulate context in the same conversation, so Claude can correlate: "Error rate spiked to 2.3% — this coincides with the third pod coming online."
-
-> **What's Happening:** You can run multiple loops in the same session. Each fires independently on its own interval. Use `/tasks` to see all active loops and stop any you no longer need.
-
-### Step 4: Set a One-Time Reminder
-
-The migration is expected to take about 2 hours. Rather than adding another loop, you set a one-time reminder:
+The migration is expected to take about 2 hours. You set a one-time reminder:
 
 ```text
-remind me in 2 hours to check if the database migration completed
+remind me in 2 hours to check if the database migration completed and stop the deploy-check loop
 ```
 
-This fires once at the specified time — no recurring cost, no context accumulation. It's a good complement to loops for time-boxed checkpoints.
+This fires once at the specified time — no recurring cost, no context accumulation. It complements the deploy-check loop for time-boxed checkpoints.
 
-> **What's Happening:** One-time reminders are part of the same scheduling system as `/loop` but fire only once. They're ideal for "check back on this later" moments. See [Run prompts on a schedule](https://code.claude.com/docs/en/scheduled-tasks) for details.
+> **What's Happening:** One-time reminders complement loops. They fire once for time-boxed checkpoints. See [Run prompts on a schedule](https://code.claude.com/docs/en/scheduled-tasks).
 
-### Step 5: The Warning Moment
+### Step 6: Post-Deploy Validation
 
-Two hours in, the deploy is complete and healthy. But you've been heads-down in another task and forgot about the loops. The conversation context has grown significantly — dozens of status checks, error rate reports, and kubectl output have accumulated. You notice Claude's responses are getting slower and a compaction warning appears.
-
-You run `/tasks` and see both loops still active. You stop them:
+The deploy completes. You stop the deploy-check loop and start a post-deploy monitor — same sub-agent pattern, now watching for regressions:
 
 ```text
-/tasks
+/loop 10m /post-deploy-monitor
 ```
 
-Then you stop each one from the task list.
+The `/post-deploy-monitor` skill (Sonnet 4.6 sub-agent) checks error rates, p99 latency, compares to baseline, posts details to Slack, and returns a one-line summary.
 
-**Lesson learned:** Check `/tasks` periodically during long sessions with active loops. Context accumulates silently.
+You head to lunch. Monitoring production from your phone — Slack pings arrive as the sub-agent checks in every 10 minutes. If something spikes, you'll know immediately. You're not at the terminal, but you're reachable.
 
-You also learn about the 3-day auto-expiry: even if you'd left these loops running and walked away, they would have self-deleted after 3 days. It's a safety net, but not a substitute for active management — 3 days of unchecked loops would waste significant tokens.
+> **What's Happening:** `/loop` doesn't require you to be at the terminal. Pair it with Slack + sub-agents and you can monitor from anywhere. The session stays alive on your machine; the notifications reach you wherever you are.
 
-> **What's Happening:** This is the key warning from the [Loop reference](../loop.md): loops are easy to forget. Context grows with every iteration. The 3-day auto-expiry prevents runaway costs in the worst case, but you should stop loops as soon as they've served their purpose. `/tasks` is your primary tool for awareness.
+### Step 7: End of Day — Cleanup
 
-### Step 6: Graduating to CI
+Back from lunch, you check `/tasks` and stop the remaining loops. You review the day: three different monitoring patterns, all orchestrated from one session — on-call triage, deploy health, post-deploy validation. No YAML files written, no CI pipelines configured — just skills, sub-agents, and loops.
 
-The deploy went well, and the `/deploy-check` pattern proved valuable. But you don't want to manually set up loops every time you deploy. You migrate the pattern to a GitHub Actions workflow that triggers automatically:
+> **What's Happening:** Check `/tasks` regularly; stop loops when they've served their purpose. Context accumulates silently, and each iteration costs tokens. Active loop management is part of the workflow.
 
-```yaml
-# .github/workflows/deploy-monitor.yml
-name: Deploy Health Monitor
+### Step 8: When /loop Isn't the Right Tool
 
-on:
-  workflow_dispatch:
-    inputs:
-      duration:
-        description: 'How long to monitor (minutes)'
-        default: '30'
-
-jobs:
-  monitor:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: anthropics/claude-code-action@v1
-        with:
-          model: sonnet
-          prompt: |
-            Monitor the deployment health for ${{ inputs.duration }} minutes:
-            1. Check kubectl rollout status every 2 minutes
-            2. Check error rates against baseline
-            3. Post a summary to Slack when monitoring completes
-            4. If any critical issues are detected, post an alert immediately
-          allowed_tools: "Bash(kubectl:*),WebFetch"
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
-```
-
-Now deploy monitoring runs on GitHub's infrastructure. It doesn't depend on your terminal being open, the team can see results in the Actions tab, and it triggers consistently on every deploy.
-
-**But you keep `/loop` for ad-hoc monitoring.** When you're debugging a specific issue or watching a one-off experiment, `/loop 2m check the error logs` is still the fastest way to set up temporary monitoring. No YAML, no push, no wait — just type and go.
-
-> **What's Happening:** [GitHub Actions](../github-actions.md) provides the persistence and reliability that `/loop` can't — it survives session endings, machine reboots, and doesn't expire after 3 days. The graduation path: prototype with `/loop` in one session, prove the pattern works, then migrate to CI for anything that should run unattended. For personal recurring tasks that don't need CI, [Desktop scheduled tasks](../loop.md#desktop-scheduled-tasks) (cron, launchd, Task Scheduler) are an intermediate option.
+If this monitoring should run overnight, on weekends, or without anyone's session open, that's [GitHub Actions](../github-actions.md) territory. `/loop` and CI serve different purposes: `/loop` is for when someone is reachable. CI is for when nobody needs to be.
 
 ---
 
 ## Key Takeaways
 
-- **`/loop` is a session companion.** It's designed for minutes-to-hours monitoring within a single working session. It's the fastest way to set up temporary recurring checks — no config files, no deployment.
-- **Graduate to CI for persistence.** Once a `/loop` pattern is proven and should run unattended, migrate to [GitHub Actions](../github-actions.md). For personal tasks, consider Desktop scheduled tasks (cron, launchd) as a middle ground.
-- **Know the hard limits.** Session-scoped, 3-day auto-expiry, no catch-up for missed fires. These aren't bugs — they make `/loop` safe by default.
-- **Check `/tasks` regularly.** This is the simplest way to stay aware of running loops and avoid context bloat or token waste.
-- **Use one-time reminders for checkpoints.** Not everything needs a recurring loop. `remind me in 2 hours to...` fires once with zero ongoing cost.
-- **Keep per-iteration output concise.** The biggest practical issue with loops is context accumulation. Instruct Claude to summarize rather than dump raw output.
+- **`/loop` is a session-scoped production companion** — deploy monitoring, post-deploy validation, on-call triage. It's the fastest way to set up temporary recurring monitoring — no config files, no deployment.
+- **Pair with sub-agents to prevent context bloat.** Sonnet 4.6 does the legwork in isolation, Opus 4.6 orchestrates. The main conversation only sees one-line summaries.
+- **Pair with Slack/Discord for phone-friendly monitoring.** You don't need to be at the terminal — the session stays alive on your machine, notifications reach you wherever you are.
+- **The dev orchestrates, not implements.** Setting up skills, configuring sub-agents, managing loops — you're designing the automation, not writing application code.
+- **Check `/tasks` regularly.** Stop loops when they've served their purpose. Context accumulates silently.
+- **Know the hard limits.** Session-scoped, 3-day auto-expiry, no catch-up for missed fires. These aren't bugs — they keep `/loop` safe by default.
+- **`/loop` and CI serve different purposes.** `/loop` for when you're reachable. [GitHub Actions](../github-actions.md) for when nobody needs to be.

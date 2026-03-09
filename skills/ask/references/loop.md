@@ -23,7 +23,8 @@ Use `/loop` when you need something to happen repeatedly during your current ses
 
 - **Polling** — check deployment status, CI pipeline progress, or service health every few minutes
 - **Monitoring** — watch for file changes, log errors, or resource usage while you work
-- **Periodic checks** — run a review skill or summarize recent changes at regular intervals
+- **On-call triage** — check for new tickets or alerts every few minutes; Claude proposes solutions and prepares context
+- **Post-deploy validation** — watch error rates, latency, or logs for regressions after a deploy goes live
 - **Recurring skill runs** — invoke a skill on a schedule (e.g., `/loop 30m /review` to periodically review uncommitted changes)
 
 If you need something to run *once in response to an event*, use [Hooks](hooks.md). If you need something to run *on demand*, use [Skills](skills.md). If you need *delegation*, use [Sub Agents](sub-agents.md). `/loop` is specifically for *"do this repeatedly on a timer while I work."*
@@ -82,7 +83,7 @@ Each iteration runs in the same conversation, so Claude has full context of prev
 
 - The `d` unit exists but is impractical — `/loop 1d` fires roughly 3 times before auto-expiry.
 - Anything longer than a few hours is unreliable. Best practice: intervals from minutes to a few hours within a single working session.
-- For persistent, cross-session scheduling, use [Desktop scheduled tasks](#desktop-scheduled-tasks) or [GitHub Actions](github-actions.md).
+- For unattended automation that runs without an active session, see [GitHub Actions](github-actions.md).
 
 Source: [Run prompts on a schedule](https://code.claude.com/docs/en/scheduled-tasks)
 
@@ -141,32 +142,46 @@ Summarize recent work at regular intervals during a long session:
 /loop 1h summarize my recent git commits and open file changes since the last check
 ```
 
+### Post-Deploy Validation (Loop + Sub Agent)
+
+Use a sub-agent skill to do the heavy lifting, keeping the main context clean:
+
+```text
+/loop 10m /post-deploy-monitor
+```
+
+Where `/post-deploy-monitor` is a skill configured with `model: sonnet` that checks error rates, compares to baseline, posts details to Slack, and returns only a one-line summary to the main conversation. The sub-agent's full context (log excerpts, metrics, analysis) stays in its own window and gets discarded when it returns — so the main conversation barely grows even over dozens of iterations.
+
+### On-Call Ticket Triage
+
+Check for new tickets and prepare context for each one:
+
+```text
+/loop 15m check for new tickets in the on-call queue, summarize each, propose a solution or next steps, post to Slack
+```
+
+This turns on-call from reactive interrupts into prepared, batch-processed triage. Claude reads each ticket, pulls context, and proposes solutions — you review and decide.
+
 ---
 
-## /loop as a Session Prototyping Tool
+## /loop vs GitHub Actions
 
-`/loop` is ideal for proving that a recurring pattern works before committing to persistent infrastructure. Think of it as the prototyping stage: you validate the prompt, the cadence, and the output format in a live session, then graduate to something more durable.
+`/loop` and [GitHub Actions](github-actions.md) serve **different purposes**, not the same purpose at different maturity levels.
 
-| Aspect | /loop | Desktop scheduled tasks | GitHub Actions cron |
-|---|---|---|---|
-| **Setup time** | Seconds — just type the command | Minutes — configure OS scheduler and a Claude invocation | Minutes to hours — write YAML, configure secrets, push |
-| **Persistence** | Dies with session (3-day max) | Survives reboots, runs on your machine | Runs on GitHub's infrastructure |
-| **Reliability** | Depends on session staying alive | Depends on your machine being on | Production-grade, team-visible |
-| **Cost model** | Claude tokens per iteration | Claude tokens per invocation | GitHub Actions minutes + Claude tokens |
-| **Best for** | Prototyping, within-session monitoring | Personal recurring tasks that outlive a session | Production workflows, team-wide automation, compliance |
-| **Visibility** | Only you see it (unless you add notifications) | Local logs, optional notifications | Team-visible in Actions tab, with logs and badges |
+`/loop` is for **session-bound monitoring where you're reachable** — at your desk, or on your phone via Slack/Discord notifications. You're freed up to do other work, but you're available if something needs attention.
 
-### Desktop Scheduled Tasks {#desktop-scheduled-tasks}
+GitHub Actions is for **unattended automation** — CI/CD pipelines, scheduled maintenance, PR reviews. Nobody needs to be present or reachable.
 
-For recurring tasks that should survive beyond your current session but don't need CI infrastructure, use your OS scheduler:
+| Aspect | /loop | GitHub Actions |
+|---|---|---|
+| **Setup time** | Seconds — just type the command | Minutes to hours — write YAML, configure secrets, push |
+| **Persistence** | Dies with session (3-day max) | Runs on GitHub's infrastructure |
+| **Reliability** | Depends on session staying alive | Production-grade, team-visible |
+| **Cost model** | Claude tokens per iteration | GitHub Actions minutes + Claude tokens |
+| **Best for** | In-session monitoring, deploy checks, on-call triage | Production workflows, team-wide automation, compliance |
+| **Visibility** | You + Slack/Discord notifications | Team-visible in Actions tab, with logs and badges |
 
-- **macOS**: `launchd` (via `launchctl`) or `cron`
-- **Linux**: `cron` or `systemd` timers
-- **Windows**: Task Scheduler
-
-These can invoke `claude` CLI directly on a schedule, giving you persistence without the overhead of GitHub Actions.
-
-**The graduation path:** Start with `/loop` to prove a pattern works within one session. If you need it to survive reboots, move to a Desktop scheduled task. If the team depends on it, graduate to a [GitHub Actions workflow](github-actions.md).
+Use `/loop` when someone is reachable. Use GitHub Actions when the automation should run whether or not anyone is watching.
 
 ---
 
@@ -189,11 +204,10 @@ These can invoke `claude` CLI directly on a schedule, giving you persistence wit
 
 ### When NOT to Use /loop
 
-- **Anything that should survive beyond the current session** — use [Desktop scheduled tasks](#desktop-scheduled-tasks) or [GitHub Actions](github-actions.md) instead. `/loop` dies when your session ends, and auto-expires after 3 days regardless.
+- **Unattended automation** — if nobody will be watching and nobody needs to be notified, use [GitHub Actions](github-actions.md).
 - **Event-driven tasks** — if you need to react to a specific event (file save, tool use, PR comment), use [Hooks](hooks.md) instead. Polling is wasteful when events are available.
-- **Production automation** — for anything the team depends on, use [GitHub Actions](github-actions.md).
 - **High-frequency intervals** — loops under 1 minute are rounded up and burn tokens quickly.
-- **Tasks requiring fresh context** — if each run should be independent with no memory of previous runs, a loop isn't ideal since context accumulates. Use a cron job or GitHub Action instead.
+- **Tasks requiring fresh context** — if each run should be independent with no memory of previous runs, a loop isn't ideal since context accumulates. Use a GitHub Action instead.
 
 ---
 
@@ -207,7 +221,9 @@ These can invoke `claude` CLI directly on a schedule, giving you persistence wit
 | Delegate a one-off task to a specialist | [Sub Agents](sub-agents.md) |
 | Run automation reliably in CI on a schedule | [GitHub Actions](github-actions.md) |
 | Coordinate multiple agents on a shared task | [Agent Teams](team-mode.md) |
-| Prove a prompt works in one session, then move to CI or Desktop | `/loop` → then graduate to Desktop scheduled tasks or GitHub Actions |
+| Monitor a deploy while working on something else | `/loop` + Slack notifications |
+| Watch for post-deploy regressions over lunch | `/loop` + sub agent + Slack |
+| Triage on-call tickets with proposed solutions | `/loop` |
 
 ---
 
@@ -216,4 +232,4 @@ These can invoke `claude` CLI directly on a schedule, giving you persistence wit
 - [Skills](skills.md) — create reusable skills that `/loop` can invoke on a schedule
 - [Built-ins](built-ins.md) — see all built-in commands, including `/tasks` for managing active loops
 - [Automating Your Workflows](automating-your-workflows.md) — understand how `/loop` fits with hooks, skills, and sub agents
-- [GitHub Actions](github-actions.md) — graduate proven `/loop` patterns to production CI
+- [GitHub Actions](github-actions.md) — set up unattended automation in CI
