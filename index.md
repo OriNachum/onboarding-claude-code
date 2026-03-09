@@ -37,9 +37,9 @@ The guide is packaged as a Claude Code plugin with two main skills:
 
 <img width="600" alt="Plugin in action" src="https://github.com/user-attachments/assets/3643154f-00e9-4793-886e-e49adfee54ef" />
 
-## Listen to This Guide
+> **Listen to this guide** — [NotebookLM audio overview](https://notebooklm.google.com/notebook/61c00692-3e07-4cac-887a-3360520d8f94) provides an AI-generated audio reflection of the guide content.
 
-[NotebookLM audio overview](https://notebooklm.google.com/notebook/0b3c7c82-fbc2-4f7a-8dd4-afe60d38c642) — an AI-generated audio reflection of the guide content.
+*⭐ Find this useful? Star the repo to follow updates and show support!* <a href="https://github.com/OriNachum/claude-code-guide/stargazers"><img src="https://img.shields.io/github/stars/OriNachum/claude-code-guide?style=social" alt="GitHub stars"></a>
 
 ## License
 

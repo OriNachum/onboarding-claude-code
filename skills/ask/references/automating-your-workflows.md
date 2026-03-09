@@ -50,6 +50,8 @@ Ask yourself these questions:
 
 **"I want Claude to hand off work to a focused specialist"** → Use [Sub Agents](sub-agents.md). For example, delegate code reviews to a read-only reviewer agent, or run tests in an isolated debugging agent.
 
+**"I want to check something every few minutes while I work"** → Use [/loop](loop.md). For example, poll deploy status every 2 minutes, watch CI pipeline progress, or run a skill on a recurring interval.
+
 **"I want to know what Claude Code ships with out of the box"** → See [Built-ins](built-ins.md) for all built-in slash commands, bundled skills, built-in hooks events, and built-in sub agents.
 
 ---
@@ -61,6 +63,8 @@ These mechanisms work together. A typical mature setup might include:
 - **Skills** that define your team's coding conventions and deployment process
 - **Hooks** that auto-lint after every file edit and block dangerous commands
 - **Sub Agents** that run parallel code reviews and test suites in isolation
+
+You can also layer [/loop](loop.md) on top of any combination — spawn a sonnet 4.6 sub-agent + agent skill every 30 minutes to check something with a hook-guarded loop. 
 
 Back to the IKEA analogy: your skills are the instruction manuals your team has written for every type of furniture. Your sub agents are the handypersons who can work from those manuals independently. And your hooks are the checkpoints built into the workshop itself — every time anyone picks up a tool, opens a package, or finishes a build, the same checks fire automatically.
 
@@ -101,6 +105,10 @@ Your skills, hooks, and permissions carry over — the same automation you build
 locally works in CI. See [GitHub Actions](github-actions.md) for setup and
 [Ongoing Work](ongoing-work.md) for automated maintenance strategies.
 
+**Tip:** If you're not sure whether a recurring task warrants a full CI pipeline,
+use [/loop](loop.md) for in-session monitoring — deploy checks, post-deploy validation,
+on-call triage. For unattended, recurring automation, see [GitHub Actions](github-actions.md).
+
 ---
 
 ## All Documentation
@@ -115,6 +123,7 @@ locally works in CI. See [GitHub Actions](github-actions.md) for setup and
 ### Automation Deep Dives
 - [Hooks](hooks.md) — Lifecycle automation, guardrails, and validation
 - [HTTP Hooks](hooks-http.md) — Dedicated guide for HTTP endpoint hook handlers
+- [Loop](loop.md) — Recurring command scheduling with /loop
 - [Skills](skills.md) — Reusable prompts, coding standards, and slash commands
 - [Sub Agents](sub-agents.md) — Specialist assistants with isolated context
 - [Built-ins](built-ins.md) — Everything Claude Code ships with out of the box

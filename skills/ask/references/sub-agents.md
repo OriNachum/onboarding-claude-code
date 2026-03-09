@@ -1,7 +1,7 @@
 ---
 title: "Sub Agents"
 parent: "Automation"
-nav_order: 5
+nav_order: 6
 permalink: /sub-agents/
 ---
 

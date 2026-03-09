@@ -28,6 +28,7 @@ Read these files from the `references/` folder as needed:
 | `automating-your-workflows.md` | 🌿 | Overview of the three automation mechanisms: Hooks, Skills, Sub Agents |
 | `hooks.md` | 🌿 | Lifecycle event automation — triggers, handlers, matchers, common patterns |
 | `hooks-http.md` | 🌳 | HTTP hook handlers — configuration, request/response cycle, authentication, common patterns |
+| `loop.md` | 🌿 | Recurring command scheduling: /loop syntax, use cases, warnings, combining with skills and hooks |
 | `skills.md` | 🌿 | Creating reusable prompt workflows as Markdown skill files |
 | `sub-agents.md` | 🌳 | Specialist agent delegation — built-in, plugin, and user-defined agents, with worktree isolation |
 | `plugins.md` | 🌿 | Installing, creating, and sharing Claude Code plugins |
@@ -53,6 +54,7 @@ Narrative walkthroughs in the `references/stories/` folder — read these for wo
 | `stories/sub-agents-in-monolith.md` | 🌳 | Using sub agents to navigate and work within a large monolith |
 | `stories/discovering-plugins.md` | 🌱 | Discovering and installing plugins — browsing marketplaces, evaluating, first plugins |
 | `stories/memory-in-practice.md` | 🌱 | How auto memory works in practice — corrections that stick, explicit remembering, promoting to CLAUDE.md |
+| `stories/automated-briefings.md` | 🌿 | Monitoring with /loop — deploy health checks, post-deploy validation, on-call ticket triage |
 
 ## Tips
 

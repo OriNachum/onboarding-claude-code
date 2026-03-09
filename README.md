@@ -6,7 +6,7 @@ Designed with love for beginners 🌱 to experts. 🌳
 **New!** Enable a proactive learning with **Game Mode**!  
 Enable with `/guide:game-mode on`
 
-> **Listen to this guide** — [NotebookLM audio overview](https://notebooklm.google.com/notebook/0b3c7c82-fbc2-4f7a-8dd4-afe60d38c642) provides an AI-generated audio reflection of the guide content.
+> **Listen to this guide** — [NotebookLM audio overview](https://notebooklm.google.com/notebook/61c00692-3e07-4cac-887a-3360520d8f94) provides an AI-generated audio reflection of the guide content.
 
 *⭐ Find this useful? Star the repo to follow updates and show support!* <a href="https://github.com/OriNachum/claude-code-guide/stargazers"><img src="https://img.shields.io/github/stars/OriNachum/claude-code-guide?style=social" alt="GitHub stars"></a>
 
@@ -64,15 +64,30 @@ From within Claude Code:
 
 ### Usage
 
-Once installed, two skills are available:
+Once installed, four skills are available:
 
 - **`/guide:onboard`** — Interactive getting-started walkthrough. Guides you through environment setup, your first session, and best practices.
 - **`/guide:ask`** — Ask any question about Claude Code features. Reads relevant reference docs to give accurate, detailed answers.
-- **`/guide:game-mode`** - Enable Game Mode. The guide will locally track your usage of Claude, assign a level per usage and help you master Claude code.
+- **`/guide:game-mode`** — Enable Game Mode. The guide locally tracks your usage of Claude, assigns a level per feature area, and helps you master Claude Code.
+- **`/guide:level-up`** — Feature roadmap and personalized next-step coaching. Shows what to learn next based on your current skill level.
 
 <img width="1050" height="366" alt="image" src="https://github.com/user-attachments/assets/3643154f-00e9-4793-886e-e49adfee54ef" />
 
 ## Documentation
+
+### User Stories
+
+Learn by example — these narrative walkthroughs show Claude Code in realistic, end-to-end scenarios where multiple features come together. Each story follows a developer through a real workflow, so you can see how the pieces fit.
+
+- [Daily Workflow](skills/ask/references/stories/daily-workflow.md) — A typical day using Claude Code, from morning context to end-of-day
+- [Getting Started with Claude Code](skills/ask/references/stories/starting-new-repo.md) — Your first days on an existing team — /init, building skills organically
+- [New Project in Existing Repo](skills/ask/references/stories/new-project-existing-repo.md) — Adding a new module/service within an existing codebase
+- [Auto-Maintain CLAUDE.md](skills/ask/references/stories/auto-maintain-claude-md.md) — GitHub Actions cron job to keep CLAUDE.md fresh weekly
+- [Context Management](skills/ask/references/stories/context-management-and-clear.md) — When to use /clear, /compact, and how to manage context
+- [Sub Agents in a Monolith](skills/ask/references/stories/sub-agents-in-monolith.md) — Using sub agents to navigate and work within a large monolith
+- [Discovering Plugins](skills/ask/references/stories/discovering-plugins.md) — Browsing marketplaces, evaluating, and installing your first plugins
+- [Memory in Practice](skills/ask/references/stories/memory-in-practice.md) — How auto memory works — corrections that stick, promoting to CLAUDE.md
+- [Automated Briefings](skills/ask/references/stories/automated-briefings.md) — Production monitoring with /loop — deploys, post-deploy validation, on-call triage
 
 ### Getting Started
 
@@ -105,48 +120,69 @@ Once installed, two skills are available:
 
 - [GitHub Actions](skills/ask/references/github-actions.md) — Running Claude Code in CI/CD pipelines with GitHub Actions
 
-### User Stories
+### Other
 
-Narrative walkthroughs showing Claude Code in real-world scenarios:
-
-- [Daily Workflow](skills/ask/references/stories/daily-workflow.md) — A typical day using Claude Code, from morning context to end-of-day
-- [Getting Started with Claude Code](skills/ask/references/stories/starting-new-repo.md) — Your first days on an existing team — /init, building skills organically
-- [New Project in Existing Repo](skills/ask/references/stories/new-project-existing-repo.md) — Adding a new module/service within an existing codebase
-- [Auto-Maintain CLAUDE.md](skills/ask/references/stories/auto-maintain-claude-md.md) — GitHub Actions cron job to keep CLAUDE.md fresh weekly
-- [Context Management](skills/ask/references/stories/context-management-and-clear.md) — When to use /clear, /compact, and how to manage context
-- [Sub Agents in a Monolith](skills/ask/references/stories/sub-agents-in-monolith.md) — Using sub agents to navigate and work within a large monolith
-- [Discovering Plugins](skills/ask/references/stories/discovering-plugins.md) — Browsing marketplaces, evaluating, and installing your first plugins
-- [Memory in Practice](skills/ask/references/stories/memory-in-practice.md) — How auto memory works — corrections that stick, promoting to CLAUDE.md
+- [Loop](skills/ask/references/loop.md) — Running recurring tasks with /loop — polling, deploy monitoring, on-call triage
 
 ## Repository structure
 
-```
+```text
 claude-code-guide/
 ├── .claude-plugin/
-│   ├── plugin.json              Plugin manifest
-│   └── marketplace.json         Marketplace manifest
+│   ├── plugin.json ........................ Plugin manifest (name: "guide", version, metadata)
+│   └── marketplace.json .................. Marketplace manifest
+├── .github/
+│   └── workflows/
+│       ├── docs-freshness.yml ............. Automated docs accuracy checker
+│       └── pages.yml ...................... Jekyll build + raw markdown deploy
+├── _includes/
+│   ├── footer_custom.html ................. Disclaimer footer
+│   └── head_custom.html ................... Raw markdown <link> header
+├── _sass/
+│   └── color_schemes/
+│       └── anthropic.scss ................. Anthropic cream color scheme
+├── hooks/
+│   ├── hooks.json ......................... Hook event configuration (PostToolUse, Stop)
+│   └── scripts/
+│       ├── track-usage.sh ................. PostToolUse handler — tracks feature usage
+│       ├── track-stop.sh .................. Stop handler — token tracking, session counting, and Fibonacci nudges
+│       └── migrate-data.sh ................ Lightweight schema migration on version upgrade
 ├── skills/
 │   ├── onboard/
-│   │   └── SKILL.md             Interactive getting-started walkthrough
-│   └── ask/
-│       ├── SKILL.md             Q&A against reference docs
-│       └── references/
-│           ├── stories/         Narrative user-story walkthroughs (7 files)
-│           ├── ...              Detailed reference docs (18 files)
-├── CLAUDE.md                    Agent instructions
-├── PRIVACY.md                   Privacy policy
-├── LICENSE                      CC BY 4.0
-└── README.md                    This file
+│   │   └── SKILL.md ...................... Interactive getting-started walkthrough
+│   ├── ask/
+│   │   ├── SKILL.md ...................... Q&A against reference docs
+│   │   └── references/ ................... Detailed reference docs read by the ask skill as needed
+│   │           ├── stories/ .............. Narrative user-story walkthroughs (9 files)
+│   │           └── ...  .................. Reference docs (20 files)
+│   ├── game-mode/
+│   │   └── SKILL.md ...................... Gamified usage tracker with levels
+│   └── level-up/
+│       └── SKILL.md ...................... Feature roadmap and coaching hints
+├── docs/
+│   ├── getting-started.md ................. Nav parent: Getting Started
+│   ├── automation.md ...................... Nav parent: Automation
+│   ├── configuration.md ................... Nav parent: Configuration & Extensions
+│   ├── ci-cd.md ........................... Nav parent: CI/CD
+│   └── user-stories.md .................... Nav parent: User Stories
+├── _config.yml ............................ Jekyll configuration (just-the-docs theme)
+├── Gemfile ................................ Ruby dependencies
+├── index.md ............................... Website landing page
+├── .local/ ................................ Runtime data (gitignored)
+│   └── game-data.json .................... Usage data (created at runtime)
+├── CLAUDE.md .............................. Agent instructions
+├── PRIVACY.md ............................. Privacy policy
+├── LICENSE ................................ CC BY 4.0
+└── README.md .............................. This file
 ```
 
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=OriNachum/claude-code-guide&type=Date)](https://www.star-history.com/#OriNachum/claude-code-guide&Date)
 
-
 ## Contributing
 
-Contributions welcome! The skills are at `skills/onboard/SKILL.md` and `skills/ask/SKILL.md`. Reference docs are in `skills/ask/references/`.
+Contributions welcome! The four skills live at `skills/onboard/`, `skills/ask/`, `skills/game-mode/`, and `skills/level-up/`. Reference docs are in `skills/ask/references/` and hooks are in `hooks/`.
 
 ## License
 
