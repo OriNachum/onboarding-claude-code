@@ -106,7 +106,7 @@ locally works in CI. See [GitHub Actions](github-actions.md) for setup and
 [Ongoing Work](ongoing-work.md) for automated maintenance strategies.
 
 **Tip:** If you're not sure whether a recurring task warrants a full CI pipeline,
-start with [/loop](loop.md) to prototype it locally. Once you've proven the pattern
+start with [/loop](loop.md) to prototype it locally within a single session. Once you've proven the pattern
 and cadence, graduate it to a GitHub Actions cron job for production reliability.
 
 ---

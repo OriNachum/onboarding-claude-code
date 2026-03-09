@@ -5,7 +5,7 @@ nav_order: 9
 permalink: /stories/automated-briefings/
 ---
 
-# Automated Daily Briefings with /loop
+# Monitoring a Deploy with /loop
 
 > **Level: 🌿 Intermediate**
 
@@ -13,164 +13,143 @@ permalink: /stories/automated-briefings/
 
 ## The Scenario
 
-You're a developer with an always-on dev machine (a home server, a cloud VM, or just a laptop that stays open). You want two daily routines automated:
-
-1. **Morning news digest** — fetches from tech news sources and prepares a concise briefing when you start your day
-2. **Nightly work summary** — scans your git activity, summarizes what you accomplished, and posts it to a Slack channel
-
-You'll use `/loop` to set these up quickly, hit a "warning moment" when you forget about them, and eventually graduate the nightly summary to GitHub Actions while keeping the morning digest as a personal `/loop`.
+You're a developer about to kick off a major deploy that includes a database migration. The rollout will take a couple of hours, and you want to stay on top of it without manually checking status every few minutes. You'll use `/loop` to monitor the deploy during your afternoon session, hit a "warning moment" when context fills up, and eventually graduate the pattern to GitHub Actions for future deploys.
 
 ---
 
 ## The Walkthrough
 
-### Step 1: Create a Morning-Digest Skill
+### Step 1: Create a Deploy-Check Skill
 
-First, you create a skill that fetches and summarizes tech news. You write a Markdown file:
-
-```markdown
-<!-- skills/morning-digest/SKILL.md -->
----
-description: Fetch and summarize morning tech news from configured sources
----
-
-# Morning Digest
-
-Fetch today's top stories from these sources:
-
-1. Hacker News front page (https://news.ycombinator.com)
-2. The latest release notes for key dependencies (check GitHub releases for react, next.js, and typescript)
-3. Anthropic's blog for Claude updates (https://www.anthropic.com/news)
-
-Use WebFetch to pull each source. For each:
-- Extract the top 5 most relevant items
-- Write a one-sentence summary of each
-- Flag anything that directly affects our tech stack (TypeScript, React, Next.js)
-
-Format as a concise morning briefing. Keep it under 20 items total.
-```
-
-> **What's Happening:** [Skills](../skills.md) are Markdown instruction files. The `description` field lets Claude auto-match this skill to relevant requests. WebFetch is a [built-in tool](../built-ins.md) for fetching web content.
-
-### Step 2: Start the Morning Loop
-
-With the skill in place, you start the loop:
-
-```text
-/loop 24h /morning-digest
-```
-
-The first run executes immediately — you get today's briefing right away. Then it repeats every 24 hours.
-
-> **What's Happening:** `/loop` runs the command immediately, then waits for the interval before repeating. See [Loop](../loop.md) for full syntax and behavior. Since this is a 24-hour loop, it will run once per day as long as your session stays alive.
-
-### Step 3: Create a Nightly-Summary Skill
-
-Next, you create a skill that summarizes your day's work:
+First, you create a skill that checks deployment health. You write a Markdown file:
 
 ```markdown
-<!-- skills/nightly-summary/SKILL.md -->
+<!-- skills/deploy-check/SKILL.md -->
 ---
-description: Summarize today's git activity and post to Slack
+description: Check deployment rollout status and report health
 ---
 
-# Nightly Work Summary
+# Deploy Check
 
-Generate a summary of today's development work:
+Check the current deployment status:
 
-1. Run `git log --author="$(git config user.name)" --since="yesterday" --oneline --all` to get all commits from today
-2. For each commit, read the changed files and summarize what was done
-3. Group changes by theme (bug fixes, features, refactoring, docs)
-4. Write a concise summary with bullet points
+1. Run `kubectl rollout status deployment/api --timeout=10s` to check rollout progress
+2. Run `kubectl get pods -l app=api --no-headers` to check pod status
+3. Check for any CrashLoopBackOff or Error states in the pods
+4. If the migration is running, check `kubectl logs job/db-migration --tail=5` for progress
 
-Then post the summary to Slack using this webhook:
-- URL: Read the webhook URL from ~/.config/nightly-summary/slack-webhook.txt
-- Format as a Slack message with the summary as the body
-- Use WebFetch to POST to the webhook
-
-If there are no commits today, post "No commits today — rest day or deep thinking day."
+Report a concise status:
+- Rollout progress (e.g., "3/5 pods ready")
+- Any pods in error states
+- Migration status if applicable
+- Overall health: ✅ Healthy, ⚠️ Degraded, or ❌ Failing
 ```
 
-> **What's Happening:** The skill uses `git log` to find your commits, then sends a formatted summary to Slack via a webhook. Storing the webhook URL in a config file keeps it out of version control. See [Best Practices](../best-practices.md) for prompt structuring tips.
+> **What's Happening:** [Skills](../skills.md) are Markdown instruction files. The `description` field lets Claude auto-match this skill to relevant requests. The skill uses `kubectl` commands to check deployment health — adjust these to match your infrastructure.
 
-### Step 4: Start the Nightly Loop
+### Step 2: Start the Deploy Loop
 
-You start the nightly summary in a separate session (or the same long-running one):
+With the skill in place, you kick off the deploy and start monitoring:
 
 ```text
-/loop 24h /nightly-summary
+/loop 5m /deploy-check
 ```
 
-Now you have two 24-hour loops running: one for morning news, one for end-of-day summaries.
+The first run executes immediately — you get a baseline health check right away. Then it repeats every 5 minutes, giving you a running status log without having to check manually.
 
-> **What's Happening:** Each `/loop` runs in its conversation context. If you want them truly independent, run them in separate terminal sessions. Both will keep running as long as the sessions are alive.
+> **What's Happening:** `/loop` runs the command immediately, then waits for the interval before repeating. Each iteration runs in the same conversation, so Claude can detect trends: "Pod restart count increased from 2 to 5 since the last check." See [Loop](../loop.md) for full syntax and the [Limitations](../loop.md#limitations) section for hard constraints.
+
+### Step 3: Add an Error-Rate Watcher
+
+The deploy is rolling out, but you also want to watch your error dashboard. You add a second loop:
+
+```text
+/loop 10m check the error rate at our monitoring endpoint and flag any spike above 1% — compare to the baseline from the first check
+```
+
+Now you have two loops running: deploy health every 5 minutes, error rate every 10 minutes. Both accumulate context in the same conversation, so Claude can correlate: "Error rate spiked to 2.3% — this coincides with the third pod coming online."
+
+> **What's Happening:** You can run multiple loops in the same session. Each fires independently on its own interval. Use `/tasks` to see all active loops and stop any you no longer need.
+
+### Step 4: Set a One-Time Reminder
+
+The migration is expected to take about 2 hours. Rather than adding another loop, you set a one-time reminder:
+
+```text
+remind me in 2 hours to check if the database migration completed
+```
+
+This fires once at the specified time — no recurring cost, no context accumulation. It's a good complement to loops for time-boxed checkpoints.
+
+> **What's Happening:** One-time reminders are part of the same scheduling system as `/loop` but fire only once. They're ideal for "check back on this later" moments. See [Run prompts on a schedule](https://code.claude.com/docs/en/scheduled-tasks) for details.
 
 ### Step 5: The Warning Moment
 
-A week later, you check your Anthropic usage dashboard and notice a spike. You'd forgotten about both loops — they've been running dutifully every 24 hours, each iteration fetching web content, running git commands, and posting to Slack. That's 14 iterations you didn't think about, each consuming tokens.
+Two hours in, the deploy is complete and healthy. But you've been heads-down in another task and forgot about the loops. The conversation context has grown significantly — dozens of status checks, error rate reports, and kubectl output have accumulated. You notice Claude's responses are getting slower and a compaction warning appears.
 
-You also notice the Slack channel has a nightly summary for Saturday and Sunday — days you didn't work — each posting "No commits today."
-
-**Lesson learned:** loops are easy to forget. You need awareness.
-
-You set up a weekly reminder:
+You run `/tasks` and see both loops still active. You stop them:
 
 ```text
-/loop 1w list all active /loop automations and send a reminder to Discord with the list and their estimated weekly token cost
+/tasks
 ```
 
-> **What's Happening:** This is the key warning from the [Loop reference](../loop.md): loops that are forgotten waste tokens silently. The weekly reminder loop is a meta-automation — a loop that monitors your other loops. You can also use `/tasks` anytime to check what's running.
+Then you stop each one from the task list.
+
+**Lesson learned:** Check `/tasks` periodically during long sessions with active loops. Context accumulates silently.
+
+You also learn about the 3-day auto-expiry: even if you'd left these loops running and walked away, they would have self-deleted after 3 days. It's a safety net, but not a substitute for active management — 3 days of unchecked loops would waste significant tokens.
+
+> **What's Happening:** This is the key warning from the [Loop reference](../loop.md): loops are easy to forget. Context grows with every iteration. The 3-day auto-expiry prevents runaway costs in the worst case, but you should stop loops as soon as they've served their purpose. `/tasks` is your primary tool for awareness.
 
 ### Step 6: Graduating to CI
 
-After running the nightly summary for a month, you're confident in the pattern. But it has reliability issues: if your laptop sleeps, the loop stops. If the session crashes, you lose the automation. The nightly summary is something you and your team depend on — it needs to be reliable.
-
-You migrate it to a GitHub Actions cron job:
+The deploy went well, and the `/deploy-check` pattern proved valuable. But you don't want to manually set up loops every time you deploy. You migrate the pattern to a GitHub Actions workflow that triggers automatically:
 
 ```yaml
-# .github/workflows/nightly-summary.yml
-name: Nightly Work Summary
+# .github/workflows/deploy-monitor.yml
+name: Deploy Health Monitor
 
 on:
-  schedule:
-    - cron: '0 22 * * 1-5'  # 10 PM, weekdays only
   workflow_dispatch:
+    inputs:
+      duration:
+        description: 'How long to monitor (minutes)'
+        default: '30'
 
 jobs:
-  summarize:
+  monitor:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Full history for git log
 
       - uses: anthropics/claude-code-action@v1
         with:
           model: sonnet
           prompt: |
-            Summarize today's git activity:
-            1. Run git log for commits from today
-            2. Group by theme (features, fixes, refactoring)
-            3. Post summary to Slack webhook
-          allowed_tools: "Bash(git log:*),Read,WebFetch"
+            Monitor the deployment health for ${{ inputs.duration }} minutes:
+            1. Check kubectl rollout status every 2 minutes
+            2. Check error rates against baseline
+            3. Post a summary to Slack when monitoring completes
+            4. If any critical issues are detected, post an alert immediately
+          allowed_tools: "Bash(kubectl:*),WebFetch"
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
 ```
 
-The cron schedule handles weekdays only (no more weekend "no commits" noise), it survives machine reboots, and the team can see the workflow in the Actions tab.
+Now deploy monitoring runs on GitHub's infrastructure. It doesn't depend on your terminal being open, the team can see results in the Actions tab, and it triggers consistently on every deploy.
 
-But you **keep the morning digest as a `/loop`**. It's personal, interactive (you sometimes ask follow-up questions about articles), and doesn't need production reliability.
+**But you keep `/loop` for ad-hoc monitoring.** When you're debugging a specific issue or watching a one-off experiment, `/loop 2m check the error logs` is still the fastest way to set up temporary monitoring. No YAML, no push, no wait — just type and go.
 
-> **What's Happening:** [GitHub Actions](../github-actions.md) provides the reliability that `/loop` can't — scheduled execution on infrastructure that doesn't depend on your laptop being open. The graduation path is: prototype with `/loop`, prove the pattern, then migrate to CI for anything the team depends on.
+> **What's Happening:** [GitHub Actions](../github-actions.md) provides the persistence and reliability that `/loop` can't — it survives session endings, machine reboots, and doesn't expire after 3 days. The graduation path: prototype with `/loop` in one session, prove the pattern works, then migrate to CI for anything that should run unattended. For personal recurring tasks that don't need CI, [Desktop scheduled tasks](../loop.md#desktop-scheduled-tasks) (cron, launchd, Task Scheduler) are an intermediate option.
 
 ---
 
 ## Key Takeaways
 
-- **Start with `/loop` to experiment.** It takes seconds to set up a recurring automation. Don't over-engineer — prove the pattern works first.
-- **Graduate to CI for production.** Once a `/loop` pattern is proven and others depend on it, migrate to [GitHub Actions](../github-actions.md) for reliability.
-- **Always set up reminders for running loops.** A weekly `/loop` that audits your other loops prevents silent token drain.
-- **Use webhooks for visibility.** Posting to Slack, Discord, or any notification channel ensures you know your loops are running — and what they're producing.
-- **Keep personal loops as loops.** Not everything needs CI. Interactive, personal automations like morning digests are a great fit for `/loop` long-term.
-- **Weekday-only logic matters.** When graduating to CI, use cron expressions to skip weekends and holidays. `/loop` doesn't have this nuance built in.
+- **`/loop` is a session companion.** It's designed for minutes-to-hours monitoring within a single working session. It's the fastest way to set up temporary recurring checks — no config files, no deployment.
+- **Graduate to CI for persistence.** Once a `/loop` pattern is proven and should run unattended, migrate to [GitHub Actions](../github-actions.md). For personal tasks, consider Desktop scheduled tasks (cron, launchd) as a middle ground.
+- **Know the hard limits.** Session-scoped, 3-day auto-expiry, no catch-up for missed fires. These aren't bugs — they make `/loop` safe by default.
+- **Check `/tasks` regularly.** This is the simplest way to stay aware of running loops and avoid context bloat or token waste.
+- **Use one-time reminders for checkpoints.** Not everything needs a recurring loop. `remind me in 2 hours to...` fires once with zero ongoing cost.
+- **Keep per-iteration output concise.** The biggest practical issue with loops is context accumulation. Instruct Claude to summarize rather than dump raw output.
