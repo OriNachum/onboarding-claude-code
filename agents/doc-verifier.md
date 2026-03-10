@@ -60,7 +60,7 @@ Compare key factual claims: model names, model IDs, CLI flags, default values, f
 | intermediate/loop.md | https://docs.anthropic.com/en/docs/claude-code/scheduled-tasks |
 | intermediate/skills.md | https://docs.anthropic.com/en/docs/claude-code/skills |
 | expert/hooks-http.md | https://docs.anthropic.com/en/docs/claude-code/hooks, https://docs.anthropic.com/en/docs/claude-code/hooks-guide |
-| expert/ongoing-work.md | https://docs.anthropic.com/en/docs/claude-code/features-overview |
+| expert/ongoing-work.md | https://docs.anthropic.com/en/docs/claude-code/scheduled-tasks |
 | expert/sub-agents.md | https://docs.anthropic.com/en/docs/claude-code/sub-agents |
 | expert/team-mode.md | https://docs.anthropic.com/en/docs/claude-code/agent-teams |
 

@@ -70,7 +70,7 @@ Back to the IKEA analogy: your skills are the instruction manuals your team has 
 
 Each page linked above walks you through how to get started, from zero to a working automation.
 
-### Taking it further: Agent Teams (experimental)
+### ⚠️ Taking it further: Agent Teams (experimental)
 
 [Agent teams](../expert/team-mode.md) take this combination to the next level. Instead of one Claude session orchestrating skills, hooks, and sub agents, you get multiple full Claude instances — each with access to all your skills and hooks — working together with a shared task list and direct communication. One teammate can run your `/review` skill while another implements a fix, with hooks firing on both, and the teammates can discuss findings with each other without going through you.
 

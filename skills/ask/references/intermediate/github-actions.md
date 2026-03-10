@@ -184,7 +184,8 @@ Key inputs for `anthropics/claude-code-action`:
 
 | Input | Description |
 |---|---|
-| `anthropic_api_key` | API key or OAuth token for authentication (required) |
+| `anthropic_api_key` | Anthropic Console API key |
+| `claude_code_oauth_token` | Claude Code subscription OAuth token (requires `@v1.0.25`+) |
 | `claude_args` | CLI arguments passed to Claude Code (e.g., `--model sonnet`) |
 | `prompt` | The prompt Claude receives for this workflow run |
 | `settings` | JSON string with Claude Code settings (e.g., tool permissions) |
