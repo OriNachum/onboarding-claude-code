@@ -78,7 +78,7 @@ Once installed, four skills are available:
 This plugin doubles as a **real-world hooks example**. Game Mode uses all three hook events to power its gamification system:
 
 - **PostToolUse** — tracks which Claude Code features you use ([track-usage.sh](hooks/scripts/track-usage.sh))
-- **UserPromptSubmit** — detects `/loop` usage in your prompts ([track-prompt.sh](hooks/scripts/track-prompt.sh))
+- **UserPromptSubmit** — detects slash-command usage (skills, plugins, `/loop`) in your prompts ([track-prompt.sh](hooks/scripts/track-prompt.sh))
 - **Stop** — counts sessions, tracks tokens, and nudges you to try new features at Fibonacci intervals ([track-stop.sh](hooks/scripts/track-stop.sh))
 
 See [hooks.json](hooks/hooks.json) and [hooks/scripts/](hooks/scripts/) for the full implementation.
@@ -155,7 +155,7 @@ claude-code-guide/
 │   ├── hooks.json ......................... Hook event configuration (PostToolUse, UserPromptSubmit, Stop)
 │   └── scripts/
 │       ├── track-usage.sh ................. PostToolUse handler — tracks feature usage
-│       ├── track-prompt.sh ................ UserPromptSubmit handler — tracks /loop usage
+│       ├── track-prompt.sh ................ UserPromptSubmit handler — tracks slash-command usage
 │       ├── track-stop.sh .................. Stop handler — token tracking, session counting, and Fibonacci nudges
 │       └── migrate-data.sh ................ Lightweight schema migration on version upgrade
 ├── skills/
