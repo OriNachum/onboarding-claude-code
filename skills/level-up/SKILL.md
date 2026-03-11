@@ -56,6 +56,11 @@ For each feature, determine its state:
 
 | Feature | Tier | Requires |
 |---|---|---|
+| shell | Beginner | — |
+| editing | Beginner | — |
+| reading | Beginner | — |
+| search | Beginner | — |
+| btw | Beginner | — |
 | skills | Intermediate | — |
 | web | Intermediate | — |
 | planning | Intermediate | — |
@@ -65,7 +70,7 @@ For each feature, determine its state:
 | loop | Intermediate | — |
 | agents | Expert | skills + planning |
 
-Do NOT show beginner features (shell, editing, reading, search) in the roadmap — they are discovered naturally.
+Show ALL features in the roadmap, including beginner features. Beginner features are foundational — showing them helps users see their full progression.
 
 ### Roadmap format
 
@@ -75,6 +80,14 @@ Present features grouped by tier with belt emoji, use count, and belt label. Exa
 🥋  FEATURE ROADMAP
 ═══════════════════════════════════════════════
 
+  Beginner
+  ────────────────────────────────────────────
+  ⚪ Shell Commands  (0 uses)     White Belt
+  ⚪ Code Editing    (0 uses)     White Belt
+  ⚪ File Reading    (0 uses)     White Belt
+  ⚪ Code Search     (0 uses)     White Belt
+  ⚪ Quick Aside     (0 uses)     White Belt
+                    ⬇️
   Intermediate
   ────────────────────────────────────────────
   ⚪ Skills         (12 uses)    White Belt
@@ -102,6 +115,14 @@ Advanced user example with dans:
 🥋  FEATURE ROADMAP
 ═══════════════════════════════════════════════
 
+  Beginner
+  ────────────────────────────────────────────
+  ⚫ Shell Commands  (2400 uses)  Black Belt ◻◻
+  ⚫ Code Editing    (1800 uses)  Black Belt ◻
+  ⚫ File Reading    (3200 uses)  Black Belt ◻◻
+  🟤 Code Search     (320 uses)   Brown Belt
+  🟡 Quick Aside     (18 uses)    Yellow Belt
+                    ⬇️
   Intermediate
   ────────────────────────────────────────────
   ⚫ Skills         (1200 uses)  Black Belt ◻

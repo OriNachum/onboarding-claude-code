@@ -96,6 +96,16 @@ Each task takes a few minutes. Claude handles them in isolation, with a fresh co
 
 > **What's Happening:** `/clear` between tasks isn't just about context management — it prevents cross-contamination. Claude won't accidentally reference files from an earlier task or carry forward assumptions that don't apply.
 
+Between tasks, a teammate messages you: "What were the rate limiting headers you added this morning? I need to document them for the API guide." You're about to start the CSV export script — you don't want to reload all the rate limiting context.
+
+```text
+> /btw What X-RateLimit headers does a Redis-backed sliding window rate limiter typically return?
+```
+
+Claude answers instantly in a separate sub-request. Your main session never sees the question or the answer — no context spent, no topic drift. You paste the answer in Slack and move on to the CSV script with a clean slate.
+
+> **What's Happening:** `/btw` sends a one-off request that doesn't enter the conversation context. It's perfect for quick lookups mid-day when you don't want to burn context on something unrelated to your current task. Unlike `/clear` (which resets everything) or `/compact` (which summarizes), `/btw` has zero impact on your session.
+
 ### End of Day: Tomorrow's Agenda
 
 Before you wrap up, you want to know what's coming tomorrow. You have a skill for this — `/plan-tomorrow` — that reads your project tracker and sends a summary to Slack:

@@ -79,6 +79,7 @@ Type `/` in Claude Code to see all available commands. Some commands depend on y
 | `/plan` | Enter plan mode directly from the prompt |
 | `/tasks` | List and manage background tasks |
 | `/loop [interval] [command]` | Run a prompt or command on a recurring interval (default: 10 minutes) |
+| `/btw [message]` | Send a one-off request that doesn't enter the conversation context — perfect for quick lookups mid-task |
 | `/keybindings` | Open keybindings configuration file |
 | `/stats` | Visualize daily usage, session history, streaks |
 | `/insights` | Generate a report analyzing your sessions |

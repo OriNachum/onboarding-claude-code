@@ -60,7 +60,8 @@ Present the available commands:
     "planning":  { "count": 0, "lastUsed": null },
     "mcp":       { "count": 0, "lastUsed": null },
     "notebooks": { "count": 0, "lastUsed": null },
-    "loop":      { "count": 0, "lastUsed": null }
+    "loop":      { "count": 0, "lastUsed": null },
+    "btw":       { "count": 0, "lastUsed": null }
   },
   "tokens": {
     "read": 0,
@@ -71,7 +72,7 @@ Present the available commands:
 ```
 
 1. Tell the user game mode is now active. Mention:
-   - Tool usage is being tracked across 12 feature categories
+   - Tool usage is being tracked across 13 feature categories
    - Use `/guide:game-mode stats` to see their dashboard
    - Use `/guide:game-mode off` to pause tracking
    - Data is stored locally and never transmitted
@@ -96,7 +97,7 @@ Present the available commands:
 
 | Tier | Multiplier | Features |
 |---|---|---|
-| Beginner | x1 | shell, editing, reading, search |
+| Beginner | x1 | shell, editing, reading, search, btw |
 | Intermediate | x10 | skills, plugins, web, planning, notebooks, mcp, loop |
 | Expert | x100 | agents |
 
@@ -125,6 +126,7 @@ Present the available commands:
 |  🟠 Code Editing     B      32      32   1h ago       |
 |  🟡 File Reading     B      28      28   30m ago      |
 |  🟡 Code Search      B      18      18   1h ago       |
+|  ⚪ Quick Aside      B       0       0   never        |
 |  ⚪ Skills           I       5      50   1d ago       |
 |  ⚪ Plugins          I       2      20   3d ago       |
 |  ⚪ Web Research     I       3      30   2d ago       |
@@ -135,7 +137,7 @@ Present the available commands:
 |  ⚪ Loop/Schedule    I       0       0   never        |
 +=======================================================+
 |  Raw: 1053 pts | Score: sqrt(1053) = 32.45            |
-|  Features: 10/12 unlocked                             |
+|  Features: 10/13 unlocked                             |
 |  Tokens: ~12.4K read, ~3.1K write                     |
 |  Next level: Master (score 55+, 10+ features)         |
 |  Migrated: unknown → 2.2.0 (2026-03-09)              |

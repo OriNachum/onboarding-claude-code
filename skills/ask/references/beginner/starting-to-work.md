@@ -190,6 +190,7 @@ An alternative to permission modes — OS-level isolation that restricts filesys
 | Implement with file-edit freedom | Accept Edits |
 | Run in CI/automation | `bypassPermissions` (in a sandbox) |
 | Lock down to specific operations | `dontAsk` + allow rules |
+| Ask a quick question without losing context | `/btw` (one-off, stays out of context) |
 
 ## Switching Modes During a Session
 

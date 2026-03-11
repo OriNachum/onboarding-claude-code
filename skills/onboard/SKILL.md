@@ -35,6 +35,7 @@ Share the practices that make the biggest difference:
 - **Break big tasks into steps** — Instead of "build a REST API with auth," break it into: create the routes, add the middleware, write the tests. Claude handles focused tasks much better than vague ones.
 - **Self-testing loops** — Ask Claude to write tests, run them, and fix failures in a loop. This is one of Claude Code's strongest patterns.
 - **Context management** — For long sessions, use `/compact` to summarize the conversation and free up context. Start new sessions for unrelated tasks.
+- **Quick asides with /btw** — Need to ask something unrelated mid-task? `/btw` sends a one-off request that doesn't enter context. Great for quick lookups without losing your place.
 
 ## After onboarding
 

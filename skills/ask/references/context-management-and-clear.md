@@ -133,6 +133,37 @@ Full test suite output can consume enormous context. Targeted test runs give you
 
 **Commit frequently.** Every commit is a safe point where you can `/clear` without anxiety. If you go an hour without committing, you're accumulating context debt.
 
+### Scenario 5: The Quick Aside (/btw)
+
+You're deep in a multi-file refactor — Claude has read a dozen files, you've established patterns, and everything is flowing. Then a teammate pings you: "Hey, what's the Go syntax for a buffered channel again?"
+
+You don't want to break your flow. You don't want to waste context on a completely unrelated question. You use `/btw`:
+
+```text
+> /btw What's the Go syntax for a buffered channel?
+```
+
+Claude answers the question in a **separate sub-request** that never enters your conversation context. No tokens spent on the main session. No topic drift. Your refactor context stays exactly as it was.
+
+**When to /btw:**
+
+- Quick syntax lookups unrelated to your current task
+- Answering a teammate's question without losing your place
+- Checking something ("What's the default port for Redis?") mid-implementation
+- Any sidebar question that shouldn't pollute your working context
+
+**How /btw differs from /clear and /compact:**
+
+| Tool | What it does | Context impact |
+|---|---|---|
+| `/clear` | Wipes the entire conversation | Hard reset — everything is gone |
+| `/compact` | Summarizes and replaces context | Soft reset — key info preserved as summary |
+| `/btw` | Sends a one-off request outside context | No impact — main context is untouched |
+
+`/btw` is a complete bypass. It doesn't reset, summarize, or modify your conversation in any way. The question and answer exist entirely outside your session.
+
+> **What's Happening:** `/btw` is a [built-in slash command](beginner/built-ins.md) that spawns a separate sub-request. Think of it as whispering a question to someone without interrupting the meeting — the meeting (your context) continues as if it never happened.
+
 ---
 
 ## Key Takeaways
@@ -142,3 +173,4 @@ Full test suite output can consume enormous context. Targeted test runs give you
 - **Compact at phase transitions.** When switching from investigation to implementation, `/compact` preserves your findings while freeing context for the actual work.
 - **Prevent context bloat proactively.** Be specific in what you ask Claude to read and run. Every unnecessary file read or verbose output is context you'll miss later.
 - **Commit frequently.** Commits are save points that make `/clear` safe. The more often you commit, the more freely you can manage context.
+- **/btw for quick asides.** When you need to ask something unrelated mid-task, `/btw` keeps it out of context entirely. No tokens spent, no topic drift.
