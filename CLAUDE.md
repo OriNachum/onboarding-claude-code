@@ -40,7 +40,7 @@ claude-code-guide/
 │   ├── hooks.json ......................... Hook event configuration (PostToolUse, UserPromptSubmit, Stop)
 │   └── scripts/
 │       ├── track-usage.sh ................. PostToolUse handler — tracks feature usage
-│       ├── track-prompt.sh ................ UserPromptSubmit handler — tracks /loop usage
+│       ├── track-prompt.sh ................ UserPromptSubmit handler — tracks slash-command usage
 │       ├── track-stop.sh .................. Stop handler — token tracking, session counting, and Fibonacci nudges
 │       └── migrate-data.sh ................ Lightweight schema migration on version upgrade
 ├── skills/
@@ -123,6 +123,20 @@ These rules MUST be followed when editing or creating skills:
 6. **IKEA analogy**: Hooks = assembly events (they fire during the process), Skills = packages with instruction sheets (reusable, pre-written), Sub Agents = packages + a handyperson (delegate and they deliver).
 
 7. **Difficulty tiers** — Every reference doc has a `> **Level: 🌱/🌿/🌳**` badge after the title. Sections that differ from the file's overall level get an emoji prefix on the `##` heading. Only tag sections that differ — don't repeat the file-level tag on every heading.
+
+---
+
+## Versioning
+
+The plugin version lives in `.claude-plugin/plugin.json` (`"version": "X.Y.Z"`). **Bump it on every change** so the installed plugin cache stays in sync:
+
+| Change type | Bump | Examples |
+|---|---|---|
+| **Major** (X) | Breaking changes, structural redesigns | Removing a skill, renaming hook events, changing game-data schema incompatibly |
+| **Minor** (Y) | New features, new reference docs, new hook behaviors | Adding a skill, adding a tracking category, new reference doc |
+| **Patch** (Z) | Bug fixes, wording tweaks, small improvements | Fixing a regex in a hook script, typo in a reference doc, adjusting a case branch |
+
+Always bump the version in the same commit as the change itself — never leave a functional change without a version bump.
 
 ---
 

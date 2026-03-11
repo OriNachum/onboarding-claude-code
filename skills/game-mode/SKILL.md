@@ -121,18 +121,18 @@ Present the available commands:
 +=======================================================+
 |  Feature         Tier  Count  Points  Last Used       |
 |  --------------- ----- ------ ------- ----------      |
-|  Shell Commands   B      45      45   2h ago          |
-|  Code Editing     B      32      32   1h ago          |
-|  File Reading     B      28      28   30m ago         |
-|  Code Search      B      18      18   1h ago          |
-|  Skills           I       5      50   1d ago          |
-|  Plugins          I       2      20   3d ago          |
-|  Web Research     I       3      30   2d ago          |
-|  Planning         I       2      20   5d ago          |
-|  Notebooks        I       0       0   never           |
-|  Sub Agents       E       8     800   3h ago          |
-|  MCP Tools        I       1      10   7d ago          |
-|  Loop/Schedule    I       0       0   never           |
+|  🟠 Shell Commands   B      45      45   2h ago       |
+|  🟠 Code Editing     B      32      32   1h ago       |
+|  🟡 File Reading     B      28      28   30m ago      |
+|  🟡 Code Search      B      18      18   1h ago       |
+|  ⚪ Skills           I       5      50   1d ago       |
+|  ⚪ Plugins          I       2      20   3d ago       |
+|  ⚪ Web Research     I       3      30   2d ago       |
+|  ⚪ Planning         I       2      20   5d ago       |
+|  ⚪ Notebooks        I       0       0   never        |
+|  ⚪ Sub Agents       E       8     800   3h ago       |
+|  ⚪ MCP Tools        I       1      10   7d ago       |
+|  ⚪ Loop/Schedule    I       0       0   never        |
 +=======================================================+
 |  Raw: 1053 pts | Score: sqrt(1053) = 32.45            |
 |  Features: 10/12 unlocked                             |
