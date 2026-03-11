@@ -126,6 +126,20 @@ These rules MUST be followed when editing or creating skills:
 
 ---
 
+## Versioning
+
+The plugin version lives in `.claude-plugin/plugin.json` (`"version": "X.Y.Z"`). **Bump it on every change** so the installed plugin cache stays in sync:
+
+| Change type | Bump | Examples |
+|---|---|---|
+| **Major** (X) | Breaking changes, structural redesigns | Removing a skill, renaming hook events, changing game-data schema incompatibly |
+| **Minor** (Y) | New features, new reference docs, new hook behaviors | Adding a skill, adding a tracking category, new reference doc |
+| **Patch** (Z) | Bug fixes, wording tweaks, small improvements | Fixing a regex in a hook script, typo in a reference doc, adjusting a case branch |
+
+Always bump the version in the same commit as the change itself — never leave a functional change without a version bump.
+
+---
+
 ## How to Edit
 
 - The onboarding skill lives at `skills/onboard/SKILL.md`
