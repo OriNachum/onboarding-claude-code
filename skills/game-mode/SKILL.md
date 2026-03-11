@@ -122,7 +122,7 @@ Present the available commands:
 |  Feature         Tier  Count  Points  Last Used       |
 |  --------------- ----- ------ ------- ----------      |
 |  🟠 Shell Commands   B      45      45   2h ago       |
-|  🟡 Code Editing     B      32      32   1h ago       |
+|  🟠 Code Editing     B      32      32   1h ago       |
 |  🟡 File Reading     B      28      28   30m ago      |
 |  🟡 Code Search      B      18      18   1h ago       |
 |  ⚪ Skills           I       5      50   1d ago       |
