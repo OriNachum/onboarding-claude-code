@@ -32,11 +32,19 @@ if [ "$TOOL_NAME" = "Skill" ]; then
   esac
 fi
 
+# Detect plan-file writes as planning usage
+if [ "$TOOL_NAME" = "Write" ]; then
+  FILE_PATH="$(echo "$PAYLOAD" | jq -r '.tool_input.file_path // empty')"
+  if [[ "$FILE_PATH" == *"/.claude/plans/"* ]]; then
+    CATEGORY="planning"
+  fi
+fi
+
 # Map tool name to feature category (CATEGORY may already be set by plugin detection above)
 : "${CATEGORY:=}"
 case "$TOOL_NAME" in
   Bash)                          CATEGORY="shell" ;;
-  Edit|Write)                    CATEGORY="editing" ;;
+  Edit|Write)                    [ -z "$CATEGORY" ] && CATEGORY="editing" ;;
   Read)                          CATEGORY="reading" ;;
   Grep|Glob)                     CATEGORY="search" ;;
   Skill)                         [ -z "$CATEGORY" ] && CATEGORY="skills" ;;
