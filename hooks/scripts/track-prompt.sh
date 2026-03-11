@@ -15,6 +15,9 @@ PAYLOAD="$(cat)"
 ENABLED="$(jq -r '.enabled' "$DATA_FILE")"
 [ "$ENABLED" = "true" ] || exit 0
 
+# Migrate schema if plugin version changed
+bash "${PLUGIN_ROOT}/hooks/scripts/migrate-data.sh"
+
 # Extract the user's prompt text
 PROMPT="$(echo "$PAYLOAD" | jq -r '.prompt // .content // .message.content // empty')"
 [ -n "$PROMPT" ] || exit 0
