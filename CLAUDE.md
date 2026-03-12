@@ -128,7 +128,7 @@ These rules MUST be followed when editing or creating skills:
 
 ## Versioning
 
-The plugin version lives in `.claude-plugin/plugin.json` (`"version": "X.Y.Z"`). **Bump it on every change** so the installed plugin cache stays in sync:
+The plugin version lives in `.claude-plugin/plugin.json` **and** `.claude-plugin/marketplace.json` (`"version": "X.Y.Z"`). **Bump both on every change** so the installed plugin cache stays in sync:
 
 | Change type | Bump | Examples |
 |---|---|---|
@@ -137,6 +137,12 @@ The plugin version lives in `.claude-plugin/plugin.json` (`"version": "X.Y.Z"`).
 | **Patch** (Z) | Bug fixes, wording tweaks, small improvements | Fixing a regex in a hook script, typo in a reference doc, adjusting a case branch |
 
 Always bump the version in the same commit as the change itself — never leave a functional change without a version bump.
+
+---
+
+## Git Workflow
+
+Before staging or committing changes, check the current branch. If you are on `main`, create a new descriptive branch first — never commit directly to `main`.
 
 ---
 
