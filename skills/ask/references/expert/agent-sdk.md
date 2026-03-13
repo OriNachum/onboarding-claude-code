@@ -8,13 +8,15 @@ permalink: /agent-sdk/
 # Claude Agent SDK
 
 > **Level: 🌳 Expert** | **Source:** [Claude Agent SDK](https://docs.anthropic.com/en/docs/claude-code/sdk)
+>
+> **Rename notice:** The Claude Code SDK has been renamed to the **Claude Agent SDK**. The packages are now `@anthropic-ai/claude-agent-sdk` (TypeScript) and `claude-agent-sdk` (Python). If you're migrating from the old package names, see the [Migration Guide](https://platform.claude.com/docs/en/agent-sdk/migration-guide).
 
 The Claude Agent SDK gives you programmatic access to Claude Code from TypeScript and Python. Instead of shelling out to the CLI, you get a native API with structured inputs/outputs, streaming, tool control, session management, and hooks — all from your own application code.
 
 **Packages:**
 
-- TypeScript: `@anthropic-ai/claude-code` ([npm](https://www.npmjs.com/package/@anthropic-ai/claude-code))
-- Python: `claude-code-sdk` ([PyPI](https://pypi.org/project/claude-code-sdk/))
+- TypeScript: `@anthropic-ai/claude-agent-sdk` ([npm](https://www.npmjs.com/package/@anthropic-ai/claude-agent-sdk))
+- Python: `claude-agent-sdk` ([PyPI](https://pypi.org/project/claude-agent-sdk/))
 
 ---
 
@@ -37,13 +39,13 @@ Use the SDK when you need **programmatic control** — launching Claude from app
 Install:
 
 ```bash
-npm install @anthropic-ai/claude-code
+npm install @anthropic-ai/claude-agent-sdk
 ```
 
 Minimal example:
 
 ```typescript
-import { query } from "@anthropic-ai/claude-code";
+import { query } from "@anthropic-ai/claude-agent-sdk";
 
 const messages = await query({
   prompt: "Explain what this project does",
@@ -64,20 +66,20 @@ The `query()` function is the primary interface. It returns an array of conversa
 Install:
 
 ```bash
-pip install claude-code-sdk
+pip install claude-agent-sdk
 ```
 
 Minimal example:
 
 ```python
 import anyio
-from claude_code_sdk import query, ClaudeCodeOptions
+from claude_agent_sdk import query, ClaudeAgentOptions
 
 async def main():
     messages = []
     async for message in query(
         prompt="Explain what this project does",
-        options=ClaudeCodeOptions(max_turns=3),
+        options=ClaudeAgentOptions(max_turns=3),
     ):
         messages.append(message)
     print(messages)
@@ -85,7 +87,7 @@ async def main():
 anyio.run(main)
 ```
 
-The Python SDK mirrors the TypeScript API. It requires the Claude Code CLI to be installed (`npm install -g @anthropic-ai/claude-code`).
+The Python SDK mirrors the TypeScript API. It requires the Claude Code CLI to be installed (`npm install -g @anthropic-ai/claude-agent-sdk`).
 
 ---
 
@@ -162,6 +164,36 @@ These same environment variables work for both CLI and SDK usage.
 | **Session management** | Resume, fork | Single-shot | N/A | N/A | Resume |
 | **Tool control** | Programmatic | Via settings JSON | Server-defined | Event-based | Interactive |
 | **Best for** | Custom tooling, pipelines, apps | Automated PR review, scheduled tasks | External services, databases | Guardrails, validation, logging | Day-to-day development |
+
+---
+
+## Real-World Example: Claude Code + Slack
+
+[`claude-code-slack-vscode`](https://github.com/OriNachum/autonomous-intelligence) is a VS Code extension that bridges Claude Code with Slack using the Agent SDK. It demonstrates several advanced SDK patterns in a production context.
+
+**What it does:** Lets you run Claude Code sessions from Slack threads, with bidirectional streaming of messages, permissions, and file uploads — all orchestrated through a VS Code extension.
+
+**SDK features used:**
+
+- **`query()`** — launches Claude sessions from TypeScript application code
+- **`CanUseTool` permission callbacks** — custom permission flow where Slack Block Kit buttons and VS Code webview race to respond (first-response-wins)
+- **Session management** — resume capability for long-running conversations
+- **Hooks** — `Notification` and `SessionInit` events for lifecycle integration
+
+**Architecture:**
+
+```text
+VS Code Extension
+  └─► Agent SDK client (query())
+        ├─► Claude Code session
+        └─► Slack thread (bidirectional)
+              ├─ Messages streamed to/from Slack
+              ├─ Permission requests → Block Kit buttons
+              └─ File uploads via Slack API
+Python daemon (Docker) ─► Slack Socket Mode + file-based IPC
+```
+
+**Key pattern:** The permission flow is the most interesting part. When Claude requests tool approval, the `CanUseTool` callback sends a Block Kit message to Slack *and* shows a prompt in VS Code. Whichever responds first wins — the other is dismissed. This lets operators approve actions from their phone via Slack without needing VS Code open.
 
 ---
 
