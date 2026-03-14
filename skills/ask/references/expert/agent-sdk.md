@@ -11,7 +11,7 @@ permalink: /agent-sdk/
 >
 > **Rename notice:** The Claude Code SDK has been renamed to the **Claude Agent SDK**. The packages are now `@anthropic-ai/claude-agent-sdk` (TypeScript) and `claude-agent-sdk` (Python). If you're migrating from the old package names, see the [Migration Guide](https://platform.claude.com/docs/en/agent-sdk/migration-guide).
 
-The Claude Agent SDK gives you programmatic access to Claude Code from TypeScript and Python. Instead of shelling out to the CLI, you get a native API with structured inputs/outputs, streaming, tool control, session management, and hooks — all from your own application code.
+The Claude Agent SDK gives you programmatic access to Claude Code from TypeScript and Python. It wraps the CLI in a native API with structured inputs/outputs, streaming, tool control, session management, and hooks — all from your own application code.
 
 **Packages:**
 
@@ -47,17 +47,20 @@ Minimal example:
 ```typescript
 import { query } from "@anthropic-ai/claude-agent-sdk";
 
-const messages = await query({
+const messages = [];
+for await (const message of query({
   prompt: "Explain what this project does",
   options: {
     maxTurns: 3,
   },
-});
+})) {
+  messages.push(message);
+}
 
 console.log(messages);
 ```
 
-The `query()` function is the primary interface. It returns an array of conversation messages. You can stream results by setting `options.abortController` and using the async iterator form.
+The `query()` function is the primary interface. It returns an async generator that yields conversation messages as they arrive — use `for await` to iterate. Pass `options.abortController` to cancel a running query.
 
 ---
 
@@ -87,7 +90,7 @@ async def main():
 anyio.run(main)
 ```
 
-The Python SDK mirrors the TypeScript API. It requires the Claude Code CLI to be installed (`npm install -g @anthropic-ai/claude-agent-sdk`).
+The Python SDK mirrors the TypeScript API. It requires Python 3.10+ and the Claude Code CLI installed on the machine — the SDK spawns `claude` under the hood, using whatever authentication and configuration you already have.
 
 ---
 
@@ -102,10 +105,11 @@ Both SDKs expose a `query()` function as the primary interface:
 - **`options.systemPrompt`** / **`system_prompt`** — custom system prompt
 - **`options.cwd`** / **`cwd`** — working directory for file operations
 - **`options.permissionMode`** / **`permission_mode`** — set permission behavior (e.g., `"bypassPermissions"` for CI)
+- **`options.settingSources`** / **`setting_sources`** — which config to load: `"user"`, `"project"`, `"local"`. Not loaded by default; include `"project"` to load CLAUDE.md and project hooks
 
 ### Built-in Tools
 
-Claude Code's built-in tools (Read, Write, Edit, Bash, Glob, Grep, etc.) are available in SDK sessions — the same tools Claude uses in CLI mode. You can restrict which tools are allowed via the `allowedTools` / `allowed_tools` option.
+Claude Code's built-in tools (Read, Write, Edit, Bash, Glob, Grep, etc.) are available in SDK sessions — the same tools Claude uses in CLI mode. Use the `tools` option to set which tools are available, and `allowedTools` / `allowed_tools` to auto-approve specific tools without prompting.
 
 ### Hooks
 
@@ -123,16 +127,21 @@ You can run [sub agents](sub-agents.md) from SDK sessions. The SDK supports the 
 
 The SDK supports session continuity:
 
-- **Resume** — continue a previous conversation by passing `options.sessionId` / `session_id`
-- **Fork** — branch from a previous session to explore alternatives
+- **Resume** — continue a previous conversation by passing `options.resume` / `resume` with a session ID
+- **Continue** — automatically continue the most recent session with `options.continue` (mutually exclusive with `resume`)
+- **Fork** — branch from a resumed session with `options.forkSession` / `fork_session`
 
 This enables building multi-step workflows where each step picks up from the previous one.
 
 ### Permissions and Safety
 
-In automated/CI contexts, use `options.permissionMode: "bypassPermissions"` (TypeScript) or `permission_mode="bypassPermissions"` (Python) — equivalent to `--dangerously-skip-permissions` in the CLI.
+The SDK offers layered permission control:
 
-For production applications, prefer scoped tool restrictions via `allowedTools` / `allowed_tools` to limit what Claude can do.
+- **`permissionMode`** / **`permission_mode`** — `default`, `acceptEdits`, `bypassPermissions`, `plan`, or `dontAsk`. Use `bypassPermissions` for CI (equivalent to `--dangerously-skip-permissions`) — requires also setting `allowDangerouslySkipPermissions: true`.
+- **`canUseTool`** / **`can_use_tool`** — callback invoked when Claude requests tool approval. Return `{ behavior: "allow", updatedInput }` or `{ behavior: "deny", message }`. See the [Real-World Example](#real-world-example-claude-code--slack) for a production use of this pattern.
+- **`disallowedTools`** / **`disallowed_tools`** — block specific tools even in `bypassPermissions` mode.
+
+For production, combine `tools` (restrict the base set) with `disallowedTools` (block dangerous ones) and `canUseTool` (custom approval logic).
 
 ### Structured Outputs
 
@@ -142,13 +151,13 @@ You can request structured output by passing a JSON schema via `options.outputFo
 
 ## Cloud Provider Support
 
-The SDK works with Claude on Bedrock, Vertex AI, and Azure Foundry via environment variables:
+The SDK works with Claude on Bedrock, Vertex AI, and Azure AI Foundry via environment variables:
 
 | Provider | Environment variables |
 |---|---|
 | **Amazon Bedrock** | `CLAUDE_CODE_USE_BEDROCK=1`, plus standard AWS credentials (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`) |
 | **Google Vertex AI** | `CLAUDE_CODE_USE_VERTEX=1`, `CLOUD_ML_REGION`, `ANTHROPIC_VERTEX_PROJECT_ID` |
-| **Azure Foundry** | `CLAUDE_CODE_USE_AZURE=1`, plus Azure credentials |
+| **Azure AI Foundry** | `CLAUDE_CODE_USE_FOUNDRY=1`, plus Azure credentials |
 
 These same environment variables work for both CLI and SDK usage.
 
@@ -176,7 +185,7 @@ These same environment variables work for both CLI and SDK usage.
 **SDK features used:**
 
 - **`query()`** — launches Claude sessions from TypeScript application code
-- **`CanUseTool` permission callbacks** — custom permission flow where Slack Block Kit buttons and VS Code webview race to respond (first-response-wins)
+- **`canUseTool` / `can_use_tool` permission callbacks** — custom permission flow where Slack Block Kit buttons and VS Code webview race to respond (first-response-wins)
 - **Session management** — resume capability for long-running conversations
 - **Hooks** — `Notification` and `SessionInit` events for lifecycle integration
 
@@ -193,7 +202,7 @@ VS Code Extension
 Python daemon (Docker) ─► Slack Socket Mode + file-based IPC
 ```
 
-**Key pattern:** The permission flow is the most interesting part. When Claude requests tool approval, the `CanUseTool` callback sends a Block Kit message to Slack *and* shows a prompt in VS Code. Whichever responds first wins — the other is dismissed. This lets operators approve actions from their phone via Slack without needing VS Code open.
+**Key pattern:** The permission flow is the most interesting part. When Claude requests tool approval, the `canUseTool` callback sends a Block Kit message to Slack *and* shows a prompt in VS Code. Whichever responds first wins — the other is dismissed. This lets operators approve actions from their phone via Slack without needing VS Code open.
 
 ---
 
