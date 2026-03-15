@@ -26,5 +26,6 @@ jq --argjson feats "$EXPECTED" '
   .tokens //= {"read": 0, "write": 0, "total": 0} |
   .sessionCount //= 0 |
   .suggestedFeatures //= [] |
-  .migrations //= []
+  .migrations //= [] |
+  .skillUsage //= {}
 ' "$DATA_FILE" > "$TMPFILE" && mv "$TMPFILE" "$DATA_FILE"

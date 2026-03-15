@@ -1,5 +1,5 @@
 ---
-description: "Generate an HTML dashboard visualizing all installed Claude Code skills and MCP servers. Scans global and project-level skills and MCPs, then opens an interactive filterable dashboard in the browser."
+description: "Generate an HTML dashboard visualizing all installed Claude Code skills, plugins, and MCP servers with usage statistics and martial arts belt levels."
 disable-model-invocation: true
 allowed-tools: Read, Glob, Bash, Write
 ---
@@ -69,6 +69,50 @@ key. Same extraction as Step 1c but tag with:
 Skip silently if the file doesn't exist or the key
 is missing.
 
+#### Step 1e — Plugin-installed skills
+
+Read `~/.claude/plugins/installed_plugins.json`. For
+each entry in `.plugins`, extract the first element's
+`installPath`.
+
+For each install path, read
+`<installPath>/.claude-plugin/plugin.json` to get the
+plugin `name`.
+
+Then scan `<installPath>/skills/*/SKILL.md`. For each
+skill found, extract the same fields as Step 1a, plus:
+
+- **scope**: `"plugin"`
+- **type**: `"skill"`
+- **pluginName**: the plugin name from plugin.json
+
+The slash-command for a plugin skill is
+`/<pluginName>:<skillDirName>`.
+
+Skip silently if `installed_plugins.json` does not
+exist or if a plugin has no skills directory.
+
+#### Step 1f — Game mode usage data
+
+Read `${CLAUDE_PLUGIN_ROOT}/.local/game-data.json`.
+
+If the file exists and `enabled` is true, extract:
+
+- **features**: the full features object (13 categories
+  with count + lastUsed)
+- **skillUsage**: the full skillUsage object (per-skill
+  names with count + lastUsed)
+- **sessionCount**: the session count
+
+Embed as a JavaScript object in the `<script>` block:
+
+- `const gameData = { features: {...},
+  skillUsage: {...}, sessionCount: 0 };`
+
+If the file does not exist or `enabled` is false:
+
+- `const gameData = null;`
+
 ### Step 2 — Categorize skills
 
 Use this exact mapping (applies to both global and
@@ -130,8 +174,8 @@ must be inlined.
 
 - Two groups of pill toggle buttons in a horizontal
   row
-- **Scope group:** `All` | `Global` | `Project` —
-  radio behavior (one active at a time)
+- **Scope group:** `All` | `Global` | `Project` |
+  `Plugin` — radio behavior (one active at a time)
 - **Type group:** `All` | `Skills` | `MCPs` —
   radio behavior (one active at a time)
 - Active pill: `#D97706` background, white text
@@ -139,10 +183,9 @@ must be inlined.
 - Rounded corners, smooth transitions
 - Filters combine with search bar as AND conditions
 
-**Stats ribbon (6 stats):**
+**Stats ribbon (up to 8 stats):**
 
-- A horizontal row of 6 stat boxes below the filter
-  bar:
+- A horizontal row of stat boxes below the filter bar:
   1. Total Skills — count of visible skills
   2. Categories — count of distinct categories among
      visible skills
@@ -151,9 +194,14 @@ must be inlined.
   4. Licensed — count of visible skills where license
      is not `"—"`
   5. **MCP Servers** — count of visible MCP servers
-  6. **Project Items** — count of visible items with
-     scope `"project"`
-- Grid: `repeat(auto-fill, minmax(150px, 1fr))`
+  6. **Plugin Skills** — count of visible items with
+     scope `"plugin"`
+  7. **Sessions** — `gameData.sessionCount`, or `"—"`
+     if gameData is null
+  8. **Total Uses** — sum of all `skillUsage` counts
+     from gameData, or `"—"` if gameData is null
+- Stats 7-8 only render when gameData is not null
+- Grid: `repeat(auto-fill, minmax(130px, 1fr))`
 - Each stat box: subtle background (`#F5F0EB`), large
   number, small label below
 
@@ -174,6 +222,7 @@ must be inlined.
 - **Scope badge** in top-right corner:
   - Global: `#FFF7ED` bg, `#B45309` text
   - Project: `#F0FDF4` bg, `#15803D` text
+  - Plugin: `#F5F3FF` bg, `#7C3AED` text
 - Card shows:
   - Skill name (bold, `#2D2B27`)
   - Description (first 120 chars visible;
@@ -187,6 +236,32 @@ must be inlined.
     button
   - Footer: license badge + "has scripts" badge
     (if applicable)
+  - **Belt badge** (if gameData is not null): a pill
+    in the card footer showing the martial arts belt
+    for this skill's usage count, plus "(N uses)" in
+    secondary text. Usage lookup: for plugin skills
+    use `skillUsage[pluginName + ":" + name]`, for
+    others use `skillUsage[name]`; default to 0.
+
+Belt thresholds (matching /guide:level-up):
+
+| Count   | Belt   | Emoji | Color   |
+|---------|--------|-------|---------|
+| 0–15    | White  | ⚪    | #E5E7EB |
+| 16–31   | Yellow | 🟡    | #FDE047 |
+| 32–63   | Orange | 🟠    | #FB923C |
+| 64–127  | Green  | 🟢    | #4ADE80 |
+| 128–255 | Blue   | 🔵    | #60A5FA |
+| 256–511 | Brown  | 🟤    | #A16207 |
+| 512+    | Black  | ⚫    | #1F2937 |
+
+Black Belt Dans: 1024 = 1st Dan ◻, 2048 = 2nd ◻◻,
+4096 = 3rd ◻◻◻, 8192 = 4th ◻◻◻◻, 16384+ = 5th ◻◻◻◻◻.
+
+Display: emoji + belt name as a pill badge, belt color
+at 15% opacity background, full-opacity text. Omit
+entirely if gameData is null.
+
 - Hover: card lifts with `translateY(-4px)` and
   subtle shadow increase
 - Transition: `all 0.2s ease`
@@ -211,6 +286,40 @@ must be inlined.
 - Add `data-scope` and `data-type="mcp"` attributes
   to each MCP card
 - Same hover/animation effects as skill cards
+
+**Feature Mastery section (below MCP servers):**
+
+Only rendered when `gameData` is not null. Hidden
+entirely otherwise.
+
+- Header: "🥋 Feature Mastery" with `#D97706`
+  left-border bar
+- Responsive grid of compact cards, one per feature:
+  `repeat(auto-fill, minmax(200px, 1fr))`
+- Card style: smaller than skill cards, belt color as
+  subtle left border (4px)
+
+Each card shows:
+
+- Feature display name (mapped from key):
+  shell → "Shell", editing → "Editing",
+  reading → "Reading", search → "Search",
+  btw → "Quick Aside", skills → "Skills",
+  plugins → "Plugins", web → "Web",
+  planning → "Planning", notebooks → "Notebooks",
+  agents → "Sub Agents", mcp → "MCP",
+  loop → "Loop"
+- Belt emoji + belt name
+- Usage count + dan stripes if applicable
+- Tier label: 🌱 Beginner, 🌿 Intermediate,
+  🌳 Expert
+
+Grouped by tier with small subheaders:
+
+- **🌱 Beginner**: shell, editing, reading, search, btw
+- **🌿 Intermediate**: skills, plugins, web, planning,
+  notebooks, mcp, loop
+- **🌳 Expert**: agents
 
 **Animations:**
 
@@ -245,6 +354,18 @@ inline in the HTML file.
   visibility on skill cards
 - Stats ribbon updates on every filter change (counts
   only visible items)
+- `getBelt(count)` — returns `{ emoji, name, color,
+  dans }` for a usage count using the belt threshold
+  table
+- `getSkillUsage(skill)` — looks up usage from
+  `gameData.skillUsage` by matching
+  `pluginName:name` or `name`; returns
+  `{ count, lastUsed }` or defaults to 0
+- `renderFeatureMastery()` — builds the Feature
+  Mastery section from `gameData.features`
+- `filterAll()` — updated to handle the "Plugin"
+  scope filter and update Plugin Skills / Sessions /
+  Total Uses stats
 
 ### Step 4 — Open in browser
 
